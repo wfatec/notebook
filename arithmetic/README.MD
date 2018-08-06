@@ -1,1 +1,1 @@
-#[多叉树遍历](https://github.com/wfatec/notebook/blob/master/arithmetic)
+# [多叉树遍历](https://github.com/wfatec/notebook/tree/master/arithmetic/src/多叉树遍历)
