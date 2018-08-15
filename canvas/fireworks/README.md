@@ -1,0 +1,1 @@
+# [原文](http://www.bestvist.com/p/49)

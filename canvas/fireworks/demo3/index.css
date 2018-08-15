@@ -1,0 +1,16 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.city {
+    width: 100%;
+    position: fixed;
+    bottom: 0px;
+    z-index: 100;
+}
+
+.city img {
+    width: 100%;
+}   
