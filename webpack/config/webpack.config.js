@@ -5,6 +5,8 @@ module.exports = {
     mode:'development',
     // 入口文件地址
     entry:{
+        //为项目添加垫片
+        polyfill:'babel-polyfill',
         //将src/index.js设置为入口文件，main可任意设置，这里设为文件名相同
         main:'./src/index.js'
     },
@@ -25,6 +27,39 @@ module.exports = {
         port:8088,
         //是否启用服务器压缩
         compress:true
+    },
+    //模块，用于对不同文件进行匹配和处理
+    module:{
+        rules: [
+            {
+                //匹配js或jsx类型文件
+                test:/\.(js|jsx)$/,
+                //使用babel-loader进行转义
+                use:['babel-loader'],
+                //设置目标文件
+                include:path.resolve(__dirname,'../src'),
+                //设置排除文件
+                exclude:path.resolve(__dirname,'../node_modules')
+            },{
+                //匹配less文件
+                test:/\.less$/,
+                // #extract,从一个已存在的 loader 中，创建一个提取(extract) loader
+                use:ExtractTextPlugin.extract({
+                    //
+                    fallback:"style-loader",
+                    use:[
+                        //生成一个内容为最终解析完的css代码的style标签，放到head标签里
+                        // 'style-loader',
+                        //解析css模块引入
+                        'css-loader',
+                        //可以对css进行样式补全等操作
+                        'postcss-loader',
+                        //将less解析为css
+                        'less-loader'
+                    ]
+                })
+            }
+        ]
     },
     //插件，类似于中间件，可在打包过程中进行功能扩展
     plugins:[
