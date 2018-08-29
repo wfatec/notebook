@@ -1,6 +1,9 @@
 {
     "presets": [
-        "env"
+        //es6运行环境
+        "env",
+        //react运行环境
+        "react"
     ],
     "plugins":[
         //运行时编译es6，入口文件引用作为辅助和内建，

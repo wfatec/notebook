@@ -30,8 +30,8 @@ module.exports = {
     module:{
         rules: [
             {
-                //匹配js类型文件
-                test:/\.js$/,
+                //匹配js或jsx类型文件
+                test:/\.(js|jsx)$/,
                 //使用babel-loader进行转义
                 use:['babel-loader'],
                 //设置目标文件
@@ -73,7 +73,9 @@ module.exports = {
             // body script标签位于html文件的 body 底部
             // head script标签位于html文件的 head中
             // false 不插入生成的js文件，这个几乎不会用到的
-            inject:true
+            inject:true,
+            //将给定的图标加入到输出的html文件
+            favicon:'./public/favicon.ico'
         }),
         //将css单独打包
         new ExtractTextPlugin({
