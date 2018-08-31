@@ -1,1 +1,0 @@
-export const text1 = "jimi";
