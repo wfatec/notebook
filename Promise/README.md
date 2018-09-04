@@ -406,6 +406,51 @@ var defer = function(){
     };
 };
 ```
+
+现在我们的"defer"还有一个值得注意的问题：所有的"then"方法必须传入errback，否则当调用一个不存在的函数时就会抛出异常。有一个最简单的解决方式，就是传入默认的errback来处理rejection的情况。同样的道理，我们也可以传入一个默认的callback方法来处理fulfilled的value值。
+```js
+var defer = function () {
+    var pending = [], value;
+    return {
+        resolve: function (_value) {
+            if (pending) {
+                value = ref(_value);
+                for (var i = 0, ii = pending.length; i < ii; i++) {
+                    value.then.apply(value, pending[i]);
+                }
+                pending = undefined;
+            }
+        },
+        promise: {
+            then: function (_callback, _errback) {
+                var result = defer();
+                // provide default callbacks and errbacks
+                _callback = _callback || function (value) {
+                    // by default, forward fulfillment
+                    return value;
+                };
+                _errback = _errback || function (reason) {
+                    // by default, forward rejection
+                    return reject(reason);
+                };
+                var callback = function (value) {
+                    result.resolve(_callback(value));
+                };
+                var errback = function (reason) {
+                    result.resolve(_errback(reason));
+                };
+                if (pending) {
+                    pending.push([callback, errback]);
+                } else {
+                    value.then(callback, errback);
+                }
+                return result.promise;
+            }
+        }
+    };
+};
+```
+
 现在，我们已经实现了完整的错误传递机制。同时无论是串行方式或是并行方式，我们都能够轻松的从其他promise对象中生成新的promise。再次回到之前的问题，通过promise实现分布式求和：
 ```javascript
 promises.reduce(function(accumulating, promise){
@@ -420,7 +465,7 @@ promises.reduce(function(accumulating, promise){
     // sum即为最终的求和结果
 })
 ```
-# Step5 -- Safety and Invariants(安全和不变性)
+# Step5 -- Safety and Invariants(安全和不可变性)
 promise另一个至关重要的改进是确保callbacks和errbacks能够在将来的事件循环中被调用。这将极大的降低异步编程给控制流（control-flow）带来的风险。我们回顾之前的maybeOneOneSecondLater：
 ```js
 var maybeOneOneSecondLater = function (callback, errback) {
@@ -526,5 +571,57 @@ var reject = function (reason) {
     };
 };
 ```
+尽管我们做出了修改，这里还有一个安全问题---任意可以执行'then'方法的对象都被看作是一个promise对象，这会让直接调用'then'方法出现一些意外的情况：
+- callback和errback方法可能在同一个循环中被调用
+- callback和errback方法可能同时被调用
+- callback或者errback方法可能会被多次调用
+
+我们通过'when'方法来包裹一个promise对象，并且阻止上述意外情况的发生。此外我们也可以就此对callback和errback进行封装来使得异常情况的抛出被转移到rejection中：
+
+```js
+var when = function (value, _callback, _errback) {
+    var result = defer();
+    var done;
+
+    _callback = _callback || function (value) {
+        return value;
+    };
+    _errback = _errback || function (reason) {
+        return reject(reason);
+    };
+
+    var callback = function (value) {
+        try {
+            return _callback(value);
+        } catch (reason) {
+            return reject(reason);
+        }
+    };
+    var errback = function (reason) {
+        try {
+            return _errback(reason);
+        } catch (reason) {
+            return reject(reason);
+        }
+    };
+
+    enqueue(function () {
+        ref(value).then(function (value) {
+            if (done)
+                return;
+            done = true;
+            result.resolve(ref(value).then(callback, errback));
+        }, function (reason) {
+            if (done)
+                return;
+            done = true;
+            result.resolve(errback(reason));
+        });
+    });
+
+    return result.promise;
+};
+```
+这样我们就成功阻止了上述意外情况的发生，提高了promise的安全性和不可变性。
 
 
