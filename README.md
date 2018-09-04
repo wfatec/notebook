@@ -2,3 +2,4 @@
 # [CommonJS](https://github.com/wfatec/notebook/tree/master/CommonJS)
 # [canvas](https://github.com/wfatec/notebook/tree/master/canvas)
 # [webpack](https://github.com/wfatec/webpack-dev-env)
+# [Promise](https://github.com/wfatec/notebook/tree/master/Promise)
