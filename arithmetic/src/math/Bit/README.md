@@ -144,4 +144,18 @@ Number: 5 = 0b0101
 Count of set bits = 2
 ```
 
-思路： 将输入值和1进行与运算，后依次右移输入值，输入值位0是退出
+思路： 将输入值和1进行与运算，后依次右移输入值，直到输入值为0时退出
+
+## 判断2的幂
+
+思路：若输入值为number,number&(number-1)值为0，则number为2的幂。
+
+```js
+Number: 4 = 0b0100
+Number: 3 = (4 - 1) = 0b0011
+4 & 3 = 0b0100 & 0b0011 = 0b0000 <-- Equal to zero, is power of two.
+
+Number: 10 = 0b01010
+Number: 9 = (10 - 1) = 0b01001
+10 & 9 = 0b01010 & 0b01001 = 0b01000 <-- Not equal to zero, not a power of two.
+```
