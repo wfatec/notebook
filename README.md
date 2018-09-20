@@ -3,4 +3,4 @@
 # [canvas](https://github.com/wfatec/notebook/tree/master/canvas)
 # [webpack](https://github.com/wfatec/webpack-dev-env)
 # [Promise](https://github.com/wfatec/notebook/tree/master/Promise)
-# [Rediscovering JavaScrit]((https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit)
+# [Rediscovering JavaScrit](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit)
