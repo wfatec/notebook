@@ -55,3 +55,105 @@ undefined
 再来看一下第一个`return`，尽管这一行也没有`;`，但是`+`跟在`number`后面是合法的，因此不会自动在`number`之后插入`;`。如果将`+ 2`改为`2`，那么`2`在`number`之后就是不合法的，JS就会自动插入`;`，结果为`6`而不是抛出错误。
 
 如果一行相对较短，可以一个清晰的分号作为结尾。此外，按照惯例，我们不会在`}`之后加`;`。如果一行很长，则需要分为多行，这是就需要对自动插入分号的行为多加注意。
+
+## 使用===
+
+使用===替代==是一个老生常谈的问题，这个问题ES6也依旧存在，来看个例子：
+```js
+//BROKEN CODE
+const a = '1';
+const b = 1;
+const c = '1.0';
+console.log(a == b);
+console.log(b == c);
+console.log(a == c);
+```
+由于==在进行比较时，会自动进行类型强制转换，数字和字符串比较时，会将字符串强制转换为数字再进行比较，因此结果为:
+```
+true
+true
+false
+```
+
+由于这些隐式转换，会让代码的可读性变差，同时也提高了bug的风险，因此在绝大多数情况下建议使用===来代替==。
+
+## 使用前请声明
+
+在JS中，未声明的变量不会报错，而是会默认复制到全局对象中，这会带来污染全局对象的风险，此外也会导致一些意外的bug。举个例子：
+```js
+//BROKEN CODE
+const oops = function() {
+    haha = 2;
+    onsole.log(haha);
+};
+
+oops();
+console.log(haha);
+```
+输出为：
+```
+2
+2
+```
+就是由于`haha`未声明，所以挂载到了全局对象上，修改为`let haha = 2`即可避免上述问题。
+
+再来看个例子:
+```js
+//BROKEN CODE
+const outer = function() {
+    for(i = 1; i <= 3; i++) {
+        inner();
+    }
+};
+const inner = function() {
+    for(i = 1; i <= 5; i++) {
+        console.log(i);
+    }
+};
+outer();
+```
+结果只输出一组
+```
+1
+2
+3
+4
+5
+```
+修改为
+```js
+const outer = function() {
+    for(let i = 1; i <= 3; i++) {
+        inner();
+    }
+};
+const inner = function() {
+    for(let i = 1; i <= 5; i++) {
+        console.log(i);
+    }
+};
+outer();
+```
+此时成功打印三次。
+
+## 使用严格模式
+
+使用严格模式可以在编译时进行语法检查，对于变量未声明等情况会抛出错误提示，举个例子：
+```js
+//BROKEN CODE
+'use strict';
+const oops = function() {
+    haha = 2;
+    console.log(haha);
+};
+oops();
+console.log(haha);
+```
+这是会在控制台抛出如下错误：
+```
+haha = 2;
+     ^
+
+ReferenceError: haha is not defined
+```
+这会极大降低代码出现未知错误的风险。
