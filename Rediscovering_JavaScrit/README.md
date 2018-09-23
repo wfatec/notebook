@@ -26,3 +26,4 @@
         - [多默认值](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter3-Function_Arguments#多默认值)
         - [传递undefined](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter3-Function_Arguments#传递undefined)
         - [表达式作为默认值](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter3-Function_Arguments#表达式作为默认值)
+        - [默认值参数和Rest参数的相互作用](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter3-Function_Arguments#默认值参数和Rest参数的相互作用)

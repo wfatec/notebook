@@ -336,3 +336,30 @@ stateTax = localTax * 10, localTax = stateTax * .10) {
             ^
 ReferenceError: localTax is not defined
 ```
+
+### 默认值参数和Rest参数的相互作用
+
+Rest参数有一些规则需要遵守：
+- 最多有一个Rest参数
+- Rest参数必须在参数列表的最后
+
+当默认值参数和Rest参数同时使用时会发生什么呢？来看个栗子：
+```js
+const product = function(first, second = 1, ...moreValues) {
+    console.log(first + ', ' + second + ', length:' + moreValues.length); 
+};
+```
+上面的函数有一个required参数，一个default参数和一个Rest参数，由于Rest参数必须出现在最后，尽管这时第二个参数second事实上是无需传入的，但却必须用`undefined`来占位。
+
+这是可能会想是否可以给Rest参数赋予默认值呢？我们来尝试一下：
+```js
+//BROKEN CODE const notAllowed = function(first, second, ...moreValues = [1, 2, 3]) {}
+
+If we do not provide any values for the rest parameter, then we want it to assume the values [1, 2, 3]. And JavaScript says:
+
+const notAllowed = function(first, second, ...moreValues = [1, 2, 3]) {} 
+                                                         ^
+
+SyntaxError: Rest parameter may not have a default initializer
+```
+这是JS会抛出错误，也就是说Rest参数在未传递参数时，会默认是一个空数组，而不是使用默认值代替。
