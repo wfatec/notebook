@@ -59,4 +59,4 @@
         - [throw需要包裹](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter5-ArrowFunction&FunctionalStyle#throw需要包裹)
         - [注意返回对象字面量](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter5-ArrowFunction&FunctionalStyle#注意返回对象字面量)
     - [何时使用箭头函数](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter5-ArrowFunction&FunctionalStyle#何时使用箭头函数)
-    - [箭头函数和函数式编程](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter5-ArrowFunction&FunctionalStyle#箭头函数和函数式编程)
+    - [箭头函数&函数式编程](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter5-ArrowFunction&FunctionalStyle#箭头函数&函数式编程)
