@@ -1,4 +1,4 @@
-# 使用Classes
+# 使用类
 
 在过去，JS也存在面向对象的用法，但却由于其基于原型链的实现且没有明确的类的声明，导致一直以来其面向对象的特性不被大多数人所认可。ES6新增的class语法弥补了这一缺憾，为我们提供了更好的开发体验，且语义上也更为清晰。
 
@@ -545,4 +545,44 @@ scores.forEach(score => console.log(score));
 
 当然`WeakSet`和`WeakMap`的使用也存在一些限制：
 
+- 存储于`Set`中的值以及`Map`中的keys可能是基本类型，也可能是对象类型，而`WeakSet`中的值和`WeakMap`中的keys则必须是对象，不能是基本类型。
 
+- 弱集合是不可枚举的。原因是在枚举过程中，集合中的对象可能会被垃圾回收，而这会导致迭代时发生错误。
+
+`WeakSet`只提供了`add()`，`delete()`和`has()`方法。`WeakMap`只提供了`get()`，`delete()`，`set()`和`has()`方法。正如我们不能对弱集合进行枚举，我们也不能查询它的大小 -- meiyou `size`属性。
+
+让我们比较一下`Map`和`WeakMap`的行为。下面是一个`Map`的例子：
+
+```js
+const MAX = 100000000;
+const map = new Map();
+
+for(let i = 0; i <= MAX; i++) {
+    const key = {index: i};
+    map.set(key, i);
+}
+
+console.log("DONE");
+```
+
+在每次迭代过程中，会在堆中创建一个新的对象，然后将这个对象插入并作为映射的一个key。由于`Map`将会让这些对象处于被引用状态，因此这些对象不会被垃圾回收，最终导致堆内存溢出：
+
+```
+...
+FATAL ERROR: invalid table size Allocation failed -
+JavaScript heap out of memory
+```
+
+当修改为如下代码时：
+
+```js
+//...
+const map = new WeakMap();
+//...
+```
+
+最终不会输出任何错误：
+
+```
+DONE
+```
