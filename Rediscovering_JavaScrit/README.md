@@ -103,6 +103,6 @@
     - [类表达式](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter7-WorkingWithClasses#类表达式)
     - [内置类:Set,Map,WeakSet,和WeakMap](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter7-WorkingWithClasses#内置类:Set,Map,WeakSet,和WeakMap)
         - [使用Set](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter7-WorkingWithClasses#使用Set)
-        - [使用Map](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter7-WorkingWithClasses#使用Map)
-        - [ WeakSet和WeakMap](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter7-WorkingWithClasses# WeakSet和WeakMap)
+        - [使用Map](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter7-WorkingWithClasses#使用map)
+        - [WeakSet和WeakMap](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit/chapter7-WorkingWithClasses#WeakSet和WeakMap)
     

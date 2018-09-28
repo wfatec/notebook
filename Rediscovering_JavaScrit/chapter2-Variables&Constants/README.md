@@ -10,6 +10,7 @@ ES6中一个非常重要概念就是常量和变量的区分，通过`let`和`co
 ### 重定义
 
 在同一个作用域中多次定义同一个变量是一个很糟糕的实践，并经常会导致一些错误。举个例子：
+
 ```js
 Line 1 'use strict';
 2 var max = 100;
@@ -18,7 +19,9 @@ Line 1 'use strict';
 5 var max = 200;
 6 console.log(max);
 ```
+
 在第5行中变量`max`已经存在，这是一个重复定义的语句，实际上如果想对一个已经存在的变量进行修改，应当不再对该变量进行声明。再来看一个例子：
+
 ```JS
 var a = 100;
 function fn() {
@@ -47,6 +50,7 @@ alert(a);   //300
 ### 没有块级作用域
 
 `var`只有在函数内部声明并使用时才具有块级作用域，这意味着在分支语句或是循环语句中，我们定义的`var`事实上是和外部处于同一个作用域。举个例子：
+
 ```js
 'use strict';
 console.log(message);
@@ -58,7 +62,9 @@ var message = 'spill ' + i;
 console.log('Exiting loop');
 console.log(message);
 ```
+
 结果为：
+
 ```
 undefined
 Entering loop
@@ -87,17 +93,21 @@ console.log(max);
 let max = 200;
 console.log(max);
 ```
+
 执行时会抛出如下错误：
+
 ```
 let max = 200;
     ^
 SyntaxError: Identifier 'max' has already been declared
 ```
+
 这为我们编写更健壮的程序提供了帮助。
 
 ### 块级作用域
 
 使用`let`声明的变量具有块级作用域，这些变量只在定义时所在`{...}`内部有效，且只能在定义之后才能使用，不会出现变量提升。改造一下之前的例子：
+
 ```js
 //console.log(message); //ERROR if this line is uncommented
 console.log('Entering loop');
@@ -108,6 +118,7 @@ for(let i = 0; i < 3; i++) {
 console.log('Exiting loop');
 //console.log(message); //ERROR if this line is uncommented
 ```
+
 以上代码充分说明了`let`相对于`var`语义上的区别。
 
 ## 使用const
@@ -117,6 +128,7 @@ console.log('Exiting loop');
 ### const
 
 `const`可用于定义一个常量，举个例子：
+
 ```js
 //BROKEN CODE
 'use strict';
@@ -125,7 +137,9 @@ const tax = 0.825;
 price = 110.12;
 tax = 1.25;
 ```
+
 结果会抛出一个错误：
+
 ```
 tax = 1.25;
     ^
@@ -135,6 +149,7 @@ TypeError: Assignment to constant variable.
 ### 走进const
 
 尽管const能够定义一个常量，但其仍存在一定得局限性，它只能防止基本类型的数据或者对象的引用被更改，对于对象本身的更改却无能为力，举个例子：
+
 ```js
 const max = 200;
 const ok = true;
@@ -148,11 +163,13 @@ const sam = { first: 'Sam', age: 2 };
 //sam = { first: 'Sam', age: 2 }; //Not allowed
 sam.age = 3;
 ```
+
 `sam.age = 3`可以顺利执行。
 
 ### 对象常量化
 
 如何创建一个不可更改的常量对象呢？我们先看一个例子：
+
 ```js
 //BROKEN CODE
 const greet = 'dude';
@@ -160,14 +177,18 @@ console.log(greet);
 greet[0] = 'r';
 console.log(greet);
 ```
+
 结果为：
+
 ```
 dude
 dude
 ```
+
 为什么这个对象没有被更改呢？到这里其实很多人知道了答案，这是一个string的实例，string对象在JS中是不可变类型。
 
 JS会默认忽略不可变对象的更改，但不会抛出提示，如果使用`'use strict';`则会做出提示：
+
 ```js
 //BROKEN CODE
 'use strict';
@@ -176,7 +197,9 @@ console.log(greet);
 greet[0] = 'r';
 console.log(greet);
 ```
-Now, when we modify the string instance, we get a stern error:
+
+现在，当我们修改字符串实例时，会抛出错误
+
 ```
 greet[0] = 'r';
          ^
@@ -186,6 +209,7 @@ TypeError: Cannot assign to read only property '0' of string 'dude'
 
 由于使用了const，greet的引用是不可变的，但是该实例也是不可变的。那有没有什么方法将我们自己的
 实例设置为不可变类型呢？`freeze()`方法可以帮我们做到这一点。
+
 ```js
 //BROKEN CODE
 'use strict';
@@ -194,13 +218,15 @@ const sam = Object.freeze({ first: 'Sam', age: 2 });
 sam.age = 3;
 console.log(sam.age);
 ```
-输出为：
-```
 
+输出为：
+
+```
 sam.age = 3;
         ^
 TypeError: Cannot assign to read only property 'age' of object '#<Object>'
 ```
+
 似乎我们已经实现了不可变的需求，但需要注意的是，`freeze()`实现的是**浅冻结**，所以只有对象中最顶层的属性是不可变的，对于多层嵌套的对象，子属性依旧可以更改。
 
 ## 更安全的代码
@@ -208,6 +234,7 @@ TypeError: Cannot assign to read only property 'age' of object '#<Object>'
 由于`var`没有块级作用域，使得此前的开发者们经常使用**自执行函数**的设计模式。这个模式用于生成局部变量和函数，让外部不可见。
 
 举个例子：
+
 ```js
 //BROKEN CODE
 'use strict';
@@ -219,7 +246,9 @@ var sqrt = Math.sqrt(i);
 console.log(result);
 console.log(sqrt); //sqrt is visible here, though not intended
 ```
+
 为了避免内部函数被外部获取，我们通常会使用一个自执行函数包裹：
+
 ```js
 //BROKEN CODE
 'use strict';
@@ -235,6 +264,7 @@ console.log(result);
 console.log(sqrt); //ERROR because sqrt is not visible here,
 //that's the desired behavior
 ```
+
 这样的设计模式在ES6中将不再需要。
 
 ### 优先使用const
