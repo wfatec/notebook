@@ -171,7 +171,9 @@ oneOneSecondLater().then(callback);
 ***
 
 # Step2
+
 基于之前的设计，我们再进一步思考，主要分为两个层面：
+
 1. 如果能够将defferd函数中的promise和resolver部分进行分割和组合，那将大大提高其灵活性；
 2. 是否可以通过某些方法来将promises和其他类型的数值进行区分，以便于维护。
 
@@ -179,6 +181,7 @@ oneOneSecondLater().then(callback);
 
 1. 观察（observer）promise的resolution
 2. resolver接口，仅用于决定何时触发resolution
+
 权限不能隐式的传递，实践证明，过多的权限必然会导致其滥用并最终使得代码难以维护
 
 然而这种分离当然也存在缺点，那就是使用promise对象会增加垃圾回收处理的负担(主要是由于大量闭包的使用)
@@ -252,6 +255,7 @@ var defer = function(){
 ```
 
 # Step3
+
 接下来的重点就是让promises更易于组合，让新的promise可以从旧的promise中获取value值并使用。我们来看一下下面的例子：
 
 ```javascript
