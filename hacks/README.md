@@ -37,4 +37,4 @@ xhr.withCredentials = true;
 Access to XMLHttpRequest at 'https://xxx.xx.com' from origin 'http://localhost:8080' has been blocked by CORS policy: The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribute.
 ```
 
-因此需要在`sdk`中显示的设置`withCredentials=false`，防止出现意外上述问题。
+因此需要在`sdk`中显示的设置`withCredentials=false`，防止意外出现上述问题。
