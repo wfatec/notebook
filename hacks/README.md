@@ -130,4 +130,24 @@ const files = this.fileList.map(file => {
 
 **方案二**：通过`iframe`的`src`属性，在其`url`链接后加入`hash`，此时需要修改引入系统的前端代码，可以用定时器等方法监测`url`的`hash`值变化，作出相应的鉴权处理。
 
+## 七牛云上传中文文件编码问题
 
+在使用七牛云进行分片上传时，当所有`chunk`上传完成时，需要调用`mkfile`接口将多个`chunk`合并成完整的文件，此时需要对参数进行编码，我这里使用了`crypto-js`类库，核心代码如下：
+
+```js
+let key = cryptoBase64.stringify( cryptoUtf8.parse(file.key) );
+let host = [ file.host, 'mkfile', file.size, 'key', key, 'fname', key].join('/');
+```
+
+其中，`host`即为最终的`url`，由于测试时使用的时数字和字母命名的文件，所以完全没问题，但是在线上测试时，传入含中文文件名的大文件(>4M)时，在`mkfile`时报出`400`错误，`msg`为`unvalid key`，可见我们的编码规则出了问题，经排查，七牛云的`mkfile`接口需使用`base64 urlsafe`编码，
+> Base64是将二进制转码成可见字符,从而方便我们在进行http请求时进行传输，但是Base64转码时会生成“+”，“/”符号,这些是被URL进行转码的特殊字符，这样就会导致两方面数据不一致,导致我们发送数据请求时,无法跟后台接口正确对接。
+因此我需要在发送前将“+”，“/”替换成URL不会转码的字符，接收到数据后，再将这些字符替换回去，再进行解码。
+
+修改后代码如下:
+
+```js
+let key = cryptoBase64.stringify( cryptoUtf8.parse(file.key) ).replace(/\+/g, '-').replace(/\//, '_');
+let host = [ file.host, 'mkfile', file.size, 'key', key, 'fname', key].join('/');
+```
+
+我们将`+`和`/`替换为`-`和`_`，最终问题得解！
