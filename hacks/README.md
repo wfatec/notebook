@@ -1,4 +1,4 @@
-# 我遇到的一些坑
+# 经验总结
 
 ## 巧用concat
 
@@ -188,3 +188,91 @@ npm install @myscope/private-package
 npm install private-package --registry=http://localhost:8888
 ```
 缺点是每次安装需要输入额外命令。
+
+## API 管理
+我们日常的工作中离不开`api`的对接等异步请求，这些`api`请求不但数量众多，而且极易发生异常或错误，因此对`api`的统一管理就显得尤为重要。
+
+首先我们需要将`api`提取到统一的文件夹下，可以将其命名为`API`，然后将不同模块的`api`请求逻辑放到不同的文件下，具体颗粒度由实际情况而定。我们以用户管理模块为例，共有两个接口`login`和`logout`，实际还可能包括用户信息查询等接口，这里不再赘述。由于这些接口具有一定的关联性，我们可以将其放到同一个类`User`中(为什么不用对象的方式我们待会再说)。这样我们就能将`login`和`logout`作为类的静态方法存储于类中，之所以用静态方法是为了避免实例化。具体如下：
+```js
+export class User {
+	static async login(param) {
+		return await axios.post("/user/login", param);
+	}
+
+	static async logout() {
+		return await axios.post("/user/logout");
+	}
+}
+```
+看起来似乎还不错，但是事实上异步请求必然存在很多异常和错误的情况，在每个方法中加入错误处理逻辑显然不是我们所希望的，因为这样不但增加了工作量，而且使业务逻辑不够纯粹，难于维护。那么如何引入异常处理逻辑又能和业务逻辑不耦合在一起呢？答案是 --- **修饰器**(decorator)。这也是我不将模块方法以`key: value`的形式保存在对象或函数方法中的原因：**修饰器只能用于类和类的方法，不能用于函数，因为存在函数提升**。
+
+接下来我们来实现修饰器方法`errorCatch`:
+```js
+function errorCatch(target, key, descriptor) {
+	console.log("Decorators errorCatch:", { target, key, descriptor });
+	let rawFunc = descriptor.value;
+	descriptor.value = async function() {
+		let re;
+		try {
+			re = await rawFunc.apply(this, arguments);
+			// 登录失效判断
+			if (re && re.data && re.data.code == "LOGIN_NOT") {
+				Notification.error({
+					title: "登录失效，即将返回登录页"
+				});
+				setTimeout(() => {
+					Notification.closeAll();
+					localStorage.clear();
+					VUE.$router.push("/login");
+				}, 1000);
+			}
+		} catch (e) {
+			let errorTitle, errorMsg;
+
+			if (e.response) {
+				//请求已发出
+				if (e.response.status)
+					errorTitle = `错误代码：${e.response.status}`;
+				if (e.response.statusText)
+					errorMsg = "错误信息：" + e.response.statusText;
+				if (e.response.data.path)
+					errorMsg += `<br/>请求地址：${e.response.data.path}`;
+			} else if (e.message && e.message.indexOf("timeout") > -1) {
+				errorTitle = "请求超时";
+			} else {
+				errorTitle = "未知错误";
+			}
+            
+            // 错误提示
+			Notification.error({
+				duration: 0,
+				title: errorTitle,
+				dangerouslyUseHTMLString: true,
+				message: errorMsg ? errorMsg : ""
+			});
+            
+            // 进一步处理逻辑，可省略...
+			ErrorCatch(e, { target, key, arguments: arguments });
+		}
+		return re;
+	};
+
+	return descriptor;
+}
+```
+修改`User`类：
+```js
+export class User {
+	@errorCatch
+	static async login(param) {
+		return await axios.post("/vk/user/login", param);
+	}
+
+	@errorCatch
+	static async logout() {
+		return await axios.post("/vk/user/logout");
+	}
+}
+```
+
+大功告成！大体思路就是这样～
