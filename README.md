@@ -5,3 +5,4 @@
 # [Promise](https://github.com/wfatec/notebook/tree/master/Promise)
 # [Rediscovering JavaScrit](https://github.com/wfatec/notebook/tree/master/Rediscovering_JavaScrit)
 # [技术随笔](https://github.com/wfatec/notebook/tree/master/hacks)
+# [CSS拾遗](https://github.com/wfatec/notebook/tree/master/cssThinking)
