@@ -16,6 +16,10 @@
             - [位置3](#位置3)
             - [位置4](#位置4)
             - [位置5](#位置5)
+    - [继承](#继承)
+        - [强制继承属性](#强制继承属性)
+        - [强制不继承属性](#强制不继承属性)
+        - [其它特殊值](#其它特殊值)
 
 <!-- /TOC -->
 
@@ -217,3 +221,40 @@ p {
 ```
 
 这时，其优先级将是最高的，会覆盖其它所有样式规则。
+
+## 继承
+
+有些属性具有继承大的特性，而有些属性却没有，这是根据属性的特点决定的，例如`font-family`属性写在`body`选择器下，可以让子元素继承该属性值，简化了代码的书写，而像`background-color`这样的属性，就没有多少继承的意义了。
+
+具体有哪些属性可以被继承请参考[css继承介绍](https://www.sitepoint.com/css-inheritance-introduction/)
+
+### 强制继承属性
+
+当你希望当前元素继承父级元素的属性值时，可以使用强制继承：
+
+```css
+body {
+    background-color: yellow;
+}
+
+p {
+    background-color: inherit;
+}
+```
+
+### 强制不继承属性
+
+```css
+body {
+    font-family: yellow;
+}
+
+p {
+    font-family: inherit;
+}
+```
+
+### 其它特殊值
+
+- `initial`: 初始默认值
+- `unset`: 表示如果该属性默认可继承，则值为inherit，否则值为initial
