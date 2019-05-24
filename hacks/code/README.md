@@ -3,6 +3,7 @@
 - [代码优化](#代码优化)
     - [API 管理](#api-管理)
     - [巧用concat](#巧用concat)
+    - [利用 bind 实现柯里化](#利用-bind-实现柯里化)
 
 <!-- /TOC -->
 
@@ -107,3 +108,55 @@ export class User {
 const handledArray = [].concat(rowData)
 ```
 此时无论我们的`rowData`是对象还是数组，最终都将统一转化为数组，这样我们就能统一进行处理了，是不是很简洁呢？:)
+
+## 利用 bind 实现柯里化
+
+首先引用`wiki`上对柯里化的解释：**柯里化（英语：Currying），是把接受多个参数的函数变换成接受一个单一参数（最初函数的第一个参数）的函数，并且返回接受余下的参数而且返回结果的新函数的技术**。
+
+而平时我们在使用`bind`方法时，更多的是用来绑定函数的上下文，或者说用来绑定`this`。那么柯里化和`bind`有什么关系呢？
+
+首先我们来看一下`mdn`上对`bind`的语法描述：
+
+> function.bind(thisArg[, arg1[, arg2[, ...]]])
+
+- `thisArg`：这个我们很熟悉，用于绑定`this`
+
+- `arg1, arg2, ...`：在函数调用时，依次传入的参数
+
+显然`arg1, arg2, ...`就是实现柯里化的关键！
+
+举个例子（来自`mdn`）:
+
+```js
+function list() {
+  return Array.prototype.slice.call(arguments);
+}
+
+function addArguments(arg1, arg2) {
+    return arg1 + arg2
+}
+
+var list1 = list(1, 2, 3); // [1, 2, 3]
+
+var result1 = addArguments(1, 2); // 3
+
+// Create a function with a preset leading argument
+var leadingThirtysevenList = list.bind(null, 37);
+
+// Create a function with a preset first argument.
+var addThirtySeven = addArguments.bind(null, 37); 
+
+var list2 = leadingThirtysevenList(); 
+// [37]
+
+var list3 = leadingThirtysevenList(1, 2, 3); 
+// [37, 1, 2, 3]
+
+var result2 = addThirtySeven(5); 
+// 37 + 5 = 42 
+
+var result3 = addThirtySeven(5, 10);
+// 37 + 5 = 42 , second argument is ignored
+```
+
+从上述例子可以看出，`leadingThirtysevenList`和`addThirtySeven`都实现了柯里化的效果，我们在编写代码时，活用`bind`的这一特性，可以让我们的代码更加**优雅**。
