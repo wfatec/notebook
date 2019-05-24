@@ -1,8 +1,19 @@
-# 格式化展示`JSON`字符串
+<!-- TOC -->
+
+- [JSON 处理](#json-处理)
+    - [格式化展示`JSON`字符串](#格式化展示json字符串)
+    - [`JSON`相关轮子介绍](#json相关轮子介绍)
+    - [校验`JSON`字符串](#校验json字符串)
+
+<!-- /TOC -->
+
+# JSON 处理
+
+## 格式化展示`JSON`字符串
 
 最近遇到一个需求，需要前端将后台返回的`JSON`串格式化显示出来。要知道，如果我们直接将返回的字符串输出到屏幕上，我们能看到的仅仅只是一串普通文本，像这样：
 
-![](assets/rawjson.png)
+![](../assets/rawjson.png)
 
 这么看`JSON`对象估计会让所有人崩溃~~.那么首先我们就需要让其能够保留`JSON`结构，经过一番查找，悍然发现原来我们的`JSON.stringify`方法可以对`JSON`对象进行格式化输出，先来看一下官方给出的语法：
 
@@ -44,7 +55,7 @@ JSON.stringify(JSON.parse(jsonstr), undefined, 4)
 
 输出结果为：
 
-![](assets/formatjson.png)
+![](../assets/formatjson.png)
 
 看起来人性化多了，但所有字段都是一个颜色，结构还是不够清晰，接下来就需要使用语法高亮了，这里使用了[stackoverflow的一个答案](https://stackoverflow.com/a/7220510)：
 
@@ -82,7 +93,7 @@ computed: {
 
 最终效果如下：
 
-![](assets/prettierjson.png)
+![](../assets/prettierjson.png)
 
 诶哟，不错哦～
 
@@ -90,3 +101,22 @@ computed: {
 
 - **jsoneditor：** 可靠的在线编辑工具。具体用法大家还是直接看[文档](https://github.com/josdejong/jsoneditor)吧:)
 - **react-json-view：** 基于`react`的`JSON`预览工具
+
+## 校验`JSON`字符串
+
+在完成表单校验时遇到过一个需求，要求校验输入字符串是否为`JSON`字符串，一开始想的很复杂，使用`stack`，使用正则等等，后来发现**THE EASIER THE BETTER**这句话真是真理，尤其对于程序来说。我们都用过`JSON.parse()`方法来对`json`字符串进行反编译，若传入的字符串为非法`json`串，则程序会报错。那如何将这一特性用于`json`校验呢？而校验函数的逻辑是：若输入值是`json`串，则返回`true`，反之则为`false`。那么，实际上我们只需要通过`try...catch...`捕捉到错误，并返回`false`，若正常则返回`true`。
+
+代码如下：
+
+```js
+function isJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+```
+
+是不是很简洁呢？
