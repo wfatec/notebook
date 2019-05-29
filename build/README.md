@@ -7,6 +7,7 @@
     - [关于`import`和`export`的技巧](#关于import和export的技巧)
         - [`default`的使用](#default的使用)
         - [`import`中的解构赋值](#import中的解构赋值)
+        - [`export`导出解构对象](#export导出解构对象)
         - [从类库直接`export`指定方法](#从类库直接export指定方法)
 
 <!-- /TOC -->
@@ -212,6 +213,32 @@ module.exports = exports['default'];
 ```js
 import {name} from "./student"
 ```
+
+### `export`导出解构对象
+
+有时候我们需要批量导出已知类库的方法，这个时候我们使用`export {module1, module2, ...}`这样的方法就会显得非常繁琐，那么我们可不可以直接使用对象解构批量导出呢？类似这样：
+
+```js
+import xxxlib from "xxxlib"
+
+export {...xxxlib}
+```
+
+很遗憾，答案是不可以。因为`export {module1, module2}`中的`{module11, module2, ...}`实际上**并不是一个对象，而是一个`exports`列表！**。明白了吧，所以在这里使用解构是不成立的。
+
+而`export default {...xxxlib}`确是可以生效的，但缺点也很明显，无法在`import`时直接使用解构赋值获取，原因上面已经做过解释。
+
+最后一种方案，我们如果直接使用`module.exports`，则可以实现类似的解构效果。
+
+```js
+module.exports = {...xxxlib}
+```
+
+但是需要注意的是，新版本的`babel`不支持`import`和`module.exports`的混合使用(但是`require`和`export`的混用是支持的)。这意味着我们在使用`module.exports`时，只能够使用`require`来导入依赖文件了。
+
+综上，目前还没有一个较为优雅的处理方式，期待以后能有更好的方案吧！
+
+
 
 ### 从类库直接`export`指定方法
 
