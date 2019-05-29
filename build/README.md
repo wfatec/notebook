@@ -3,6 +3,7 @@
 - [项目构建](#项目构建)
     - [批量增加`proposal`语法支持](#批量增加proposal语法支持)
     - [`.babelrc`失效](#babelrc失效)
+    - [webpack 配置别名](#webpack-配置别名)
 
 <!-- /TOC -->
 
@@ -83,3 +84,26 @@ module.exports={
 而此前的`.babelrc`可以`let it go`，不管它，再次执行代码，神奇的成功了。。。
 
 之后又查询了相关资料，始终没有一个明确的说法，只能暂且归咎于`babel`的一个`bug`了==！
+
+## webpack 配置别名
+
+有时候我们的项目文件会出现嵌套较深的情况，这时层级较低的文件内部访问其它高层级文件价内部文件内容时，就会出现`../../../../utils`这样的可怕情况，这时我们就可以通过设置别名来实现文件的快速访问。具体做法是，在`webpack.config`文件中的`resolve`属性下配置`alias`：
+
+```js
+ alias: {
+    "@src":path.resolve("src"),
+    "@component":path.resolve("src/component"),
+    "@routes":path.resolve("src/routes"),
+    "@utils":path.resolve("src/utils"),
+},
+```
+
+现在，就能通过`@src`指向根目录下的`src`文件夹了，用法：
+
+```js
+import HomePage from '@src/routes/HomePage'
+// or
+import HomePage from '@routes/HomePage'
+```
+
+是不是很方便呢？
