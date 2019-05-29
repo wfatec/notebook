@@ -4,6 +4,10 @@
     - [批量增加`proposal`语法支持](#批量增加proposal语法支持)
     - [`.babelrc`失效](#babelrc失效)
     - [webpack 配置别名](#webpack-配置别名)
+    - [关于`import`和`export`的技巧](#关于import和export的技巧)
+        - [`default`的使用](#default的使用)
+        - [`import`中的解构赋值](#import中的解构赋值)
+        - [从类库直接`export`指定方法](#从类库直接export指定方法)
 
 <!-- /TOC -->
 
@@ -107,3 +111,112 @@ import HomePage from '@routes/HomePage'
 ```
 
 是不是很方便呢？
+
+## 关于`import`和`export`的技巧
+
+### `default`的使用
+
+我们都知道，如果一个类库在`export`时提供了`default`，即：
+```js
+export default xxlib`
+```
+那么我们就能够直接使用
+```js
+import xxlib from "xxlib"
+```
+这样的方式，而如果直接
+```js
+export {method}`或`export const method = xxx
+```
+则引入方式只能是
+```js
+import {method} from "xxlib"
+```
+而如果想将`xxlib`中所有的方法引入到一个变量中，则可以使用：
+```js
+import * as xxlib from "xxlib"
+```
+这时，`export default xxx`导出的方法，则会包含在`xxlib`的`default`字段下。
+
+### `import`中的解构赋值
+
+假设又一个文件`studnt.js`:
+```js
+// student.js
+export default {
+    name: "bili",
+    age: 16
+}
+```
+
+我们想在`score.js`中引入：
+
+```js
+// score.js
+import student from "./student"
+
+const {name} = student;
+console.log(name);
+```
+
+这是完全ok的，但是当我们尝试在`import`时使用解构赋值，则会出现问题：
+
+```js
+// score.js
+import {name} from "./student"
+
+console.log(name);
+```
+
+此时的`name`值是`undefined`，这是为什么呢？
+
+原来，`import`中的解构与一般意义上的解构并不完全一致，我们的代码在经过`babel`转译之后会发生变化：
+
+```js
+export default {
+    name: "bili",
+    age: 16
+}
+```
+
+事实上会变成：
+
+```js
+module.exports.default = {
+    name: "bili",
+    age: 16
+}
+```
+
+也就是说，我们在`import`时，实际拿到的是：
+
+```js
+{
+    default: {
+        name: "bili",
+        age: 16
+    }
+}
+```
+
+这下我们就能明白为什么我们的解构赋值会不生效了。同时需要注意，我们在`import student from "student"`时，程序实际上会去自动获取`student.js`的`default`下的值，舅舅是为什么能够直接获取`student`的原因。
+
+根据以上原理，我们如何才能实现`import`的解构赋值呢？其实很简单，只要我们能够将`default`下的值直接复制到`module.exports`下不就可以了吗？即实现以下操作：
+
+```js
+module.exports = exports['default'];
+```
+
+当然这个过程已经有相应的插件[babel-plugin-add-module-exports](https://github.com/59naga/babel-plugin-add-module-exports#readme)帮我们实现了，具体用法看文档即可，安装之后我们就能愉快的使用`import`的解构语法了：
+
+```js
+import {name} from "./student"
+```
+
+### 从类库直接`export`指定方法
+
+有时候我们可能需要从某个包中直接导出某些方法，这时我们可以直接：
+```js
+export {method1, method2} from "xxxlib"
+```
+这时`method1`和`method2`将会同其它导出项一起`export`出去，非常简洁。
