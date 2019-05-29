@@ -14,7 +14,9 @@
 当一个路由的`path`匹配成功后，路由用来确定渲染结果的参数有三种：
 
 - `component`：一个`React`组件。当带有`component`参数的`route`匹配成功后，`route`会返回一个新的元素，其为`component`参数所对应的`React`组件（使用`React.createElement`创建）。
-- `render`： 一个返回`React element`的函数。当匹配成功后调用该函数。该过程与传入`component`参数类似，并且对于行级渲染与需要向元素传入额外参数的操作会更有用。
+
+- `render`： 一个返回`React element`的函数。当匹配成功后调用该函数。该过程与传入`component`参数类似，并且对于行级渲染与需要向元素传入额外参数的操作会更有用。主要用来渲染函数式组件，可以防止重复渲染组件。
+
 - `children`： 一个返回`React element`的函数。与上述两个参数不同，无论`route`是否匹配当前`location`，其都会被渲染
 
 ```js
