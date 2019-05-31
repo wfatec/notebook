@@ -5,6 +5,7 @@
     - [动态导入及懒加载](#动态导入及懒加载)
         - [路由的一般写法](#路由的一般写法)
         - [实现异步懒加载](#实现异步懒加载)
+    - [参考](#参考)
 
 <!-- /TOC -->
 
@@ -181,4 +182,11 @@ export default () => {
 -   }
   };
 ```
+
+## 参考
+
+- [React router动态加载组件-适配器模式的应用](https://www.cnblogs.com/walls/p/9632541.html)
  
+- [代码分离](https://webpack.docschina.org/guides/code-splitting/)
+
+- [dva/dynamic](https://dvajs.com/api/#dva-dynamic)
