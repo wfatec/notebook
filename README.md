@@ -19,3 +19,5 @@
 - [react](https://github.com/wfatec/notebook/tree/master/react)
 
 - [项目构建](https://github.com/wfatec/notebook/tree/master/build)
+
+- [计算机原理](https://github.com/wfatec/notebook/tree/master/cs)
