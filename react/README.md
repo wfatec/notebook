@@ -5,3 +5,5 @@
 - [react-router](https://github.com/wfatec/notebook/tree/master/react/react-router)
 
 - [代码分离](https://github.com/wfatec/notebook/tree/master/react/code-split)
+
+- [redux](https://github.com/wfatec/notebook/tree/master/react/redux)
