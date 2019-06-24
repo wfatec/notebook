@@ -14,4 +14,4 @@
 - [江南大学](https://gkcx.eol.cn/school/86/specialtyline?cid=32): 211, 食品及生物相关专业极强，整体工科专业较强，文理科相对较弱，地处无锡，离家近，城市发展较好
 - [中国矿业大学（北京）](https://gkcx.eol.cn/school/1006/specialtyline?cid=32): 211，虽然名字是矿业大学，但电子信息类专业实力也不俗，地处北京，就业好
 - [南京邮电大学](https://gkcx.eol.cn/school/160/specialtyline?cid=32): 电子信息类实力突出，其它专业较为普通，地处南京，离家近，城市发展好
-- [杭州电子科技大学](dhttps://gkcx.eol.cn/school/159/specialtyline?cid=32)：电子信息类实力突出，在浙江仅次于浙大，地处杭州，离家近，城市发展好，就业优势大
+- [杭州电子科技大学](https://gkcx.eol.cn/school/159/specialtyline?cid=32)：电子信息类实力突出，在浙江仅次于浙大，地处杭州，离家近，城市发展好，就业优势大
