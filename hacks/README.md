@@ -13,3 +13,5 @@
 - [npm管理](https://github.com/wfatec/notebook/tree/master/hacks/npm)
 
 - [上传](https://github.com/wfatec/notebook/tree/master/hacks/upload)
+
+- [JavaScript 有趣的特性](https://github.com/wfatec/notebook/tree/master/hacks/javascript)
