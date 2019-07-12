@@ -15,3 +15,5 @@
 - [上传](https://github.com/wfatec/notebook/tree/master/hacks/upload)
 
 - [JavaScript 有趣的特性](https://github.com/wfatec/notebook/tree/master/hacks/javascript)
+
+- [前端数据加密](https://github.com/wfatec/notebook/tree/master/hacks/crypto)
