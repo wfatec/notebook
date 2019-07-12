@@ -131,7 +131,7 @@ export const RSADecrypto: (
 export const AESDecrypto: (
   key: string,
   encryptoString: string,
-  iv: sting
+  iv: string
 ) => string = (key, encryptoString, iv) => {
   // 将密文转为 16 进制 buffer
   const encryptedHexStr = CryptoJS.enc.Hex.parse(encryptoString);
