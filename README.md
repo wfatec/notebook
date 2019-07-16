@@ -21,3 +21,5 @@
 - [项目构建](https://github.com/wfatec/notebook/tree/master/build)
 
 - [计算机原理](https://github.com/wfatec/notebook/tree/master/cs)
+
+- [运维相关](https://github.com/wfatec/notebook/tree/master/maintenance)
