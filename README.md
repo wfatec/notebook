@@ -22,4 +22,6 @@
 
 - [计算机原理](https://github.com/wfatec/notebook/tree/master/cs)
 
+- [性能优化](https://github.com/wfatec/notebook/tree/master/performance)
+
 - [运维相关](https://github.com/wfatec/notebook/tree/master/maintenance)
