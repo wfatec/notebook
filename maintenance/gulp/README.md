@@ -201,4 +201,6 @@ npx gulp
 
 ![gulpresult.png](./assets/gulpresult.png)
 
-可见，每次修改 `romanserver` 下的文件时，都会执行我们配置好的工作流，实现了开发过程中的自动化构建流程
+可见，每次修改 `romanserver` 下的文件时，都会执行我们配置好的工作流，实现了开发过程中的自动化构建流程。
+
+**注意**：由于关闭 supervisor 时需要手动输入密码进行确认，所以会有一个密码输入确认操作，之后的 watch 阶段将完全由 Gulp 自动实现。
