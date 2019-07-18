@@ -5,6 +5,7 @@
     - [安装](#安装)
     - [配置](#配置)
     - [执行](#执行)
+    - [多项目端口冲突](#多项目端口冲突)
 
 <!-- /TOC -->
 
@@ -204,3 +205,44 @@ npx gulp
 可见，每次修改 `romanserver` 下的文件时，都会执行我们配置好的工作流，实现了开发过程中的自动化构建流程。
 
 **注意**：由于关闭 supervisor 时需要手动输入密码进行确认，所以会有一个密码输入确认操作，之后的 watch 阶段将完全由 Gulp 自动实现。
+
+## 多项目端口冲突
+
+起初这样的配置还算 ok，但是当配置一个新的项目时，就又出现问题了，如果新旧两个项目的端口出现冲突，我们会发现新项目始终无法正常访问，而想要 `kill` 旧项目时，由于 supervisor 的进程保护机制，无法直接通过 `sudo kill -9 pid` 进行删除。因此我们需要手动对原项目进关闭：
+
+1. 关闭 supervisor 
+
+```
+sudo unlink /usr/local/var/run/supervisor.sock
+```
+
+2. 查找占用端口进程的 PID 号
+
+假设端口为 8000:
+
+```
+sudo lsof -i:8000
+```
+
+结果为：
+
+![PID](./assets/PID.png)
+
+可见 PID 号为 12556
+
+3. 杀死进程
+
+```
+sudo kill -9 12556
+```
+
+4. 重新启动 supervisor
+
+```
+supervisord -c /etc/supervisord.conf
+supervisorctl reload
+supervisorctl update
+```
+
+接下来就可以执行此前的 `npx gulp` 了
+
