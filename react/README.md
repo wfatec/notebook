@@ -7,3 +7,5 @@
 - [代码分离](https://github.com/wfatec/notebook/tree/master/react/code-split)
 
 - [redux](https://github.com/wfatec/notebook/tree/master/react/redux)
+
+- [class 中的 super()](https://github.com/wfatec/notebook/tree/master/react/super)
