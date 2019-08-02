@@ -4,6 +4,7 @@
     - [跨站脚本攻击（XSS）](#跨站脚本攻击xss)
         - [DOM 型 XSS](#dom-型-xss)
         - [解决方案](#解决方案)
+    - [参考](#参考)
 
 <!-- /TOC -->
 
@@ -72,3 +73,7 @@ div.innerHTML =
 ```
 
 这是一种更为通用的做法。
+
+## 参考
+
+[Preventing cross-site scripting attacks when using innerHTML in vanilla JavaScript](https://gomakethings.com/preventing-cross-site-scripting-attacks-when-using-innerhtml-in-vanilla-javascript/)
