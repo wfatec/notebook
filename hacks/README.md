@@ -17,3 +17,5 @@
 - [JavaScript 有趣的特性](https://github.com/wfatec/notebook/tree/master/hacks/javascript)
 
 - [前端数据加密](https://github.com/wfatec/notebook/tree/master/hacks/crypto)
+
+- [那些不常用到却很好用的 DOM API](https://github.com/wfatec/notebook/tree/master/hacks/DOM)
