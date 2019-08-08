@@ -1,6 +1,6 @@
 - [Arithmetic](https://github.com/wfatec/notebook/tree/master/arithmetic)
 
-- [CommonJS](https://github.com/wfatec/notebook/tree/master/CommonJS)
+- [深入源码系列](https://github.com/wfatec/notebook/tree/master/source)
 
 - [canvas](https://github.com/wfatec/notebook/tree/master/canvas)
 

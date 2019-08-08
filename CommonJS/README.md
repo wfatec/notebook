@@ -1,1 +1,0 @@
-# [源码实现](https://github.com/wfatec/tiny-commonjs-pack)
