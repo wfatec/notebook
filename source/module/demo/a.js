@@ -1,1 +1,3 @@
-console.log(module);
+var add =  require("./b")
+
+console.log('module a: ', module);

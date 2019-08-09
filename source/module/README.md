@@ -6,7 +6,9 @@
         - [Module Context](#module-context)
         - [Module Identifiers](#module-identifiers)
     - [NodeJS 中的 CommonJS](#nodejs-中的-commonjs)
-        - [什么是 module？](#什么是-module)
+        - [module 包含哪些内容？](#module-包含哪些内容)
+            - [简单的例子](#简单的例子)
+            - [复杂的例子](#复杂的例子)
         - [源码实现](#源码实现)
     - [参考](#参考)
 
@@ -54,7 +56,7 @@ require 是一个函数，包含如下功能：
 
 1. 在一个 module 中存在一个 require 变量，遵从上面的规范
 
-2. 在一个 module 中存在变量 exports， 在需要向外暴露API时，在 exports 的对象上添加属性。
+2. 在一个 module 中存在变量 exports， 在需要向外暴露 API 时，在 exports 的对象上添加属性。
 
 3. 在一个 module 中必须要有一个 Object 变量 module
 
@@ -74,9 +76,11 @@ module identifier 定义了 require 函数的所能接收的参数规则
 
 ## NodeJS 中的 CommonJS
 
-### 什么是 module？
+### module 包含哪些内容？
 
-作为一个前端工程师，`require` 和 `module.exports` 这对好基友我们一定不会陌生，实际上它们都来自于 `Module` 函数，这个稍后会将，本节先来感性的认识一下**什么是 module？**
+作为一个前端工程师，`require` 和 `module.exports` 这对好基友我们一定不会陌生，实际上它们都来自于 `Module` 函数，这个稍后会讲，本节先来感性的认识一下**module 包含哪些内容**
+
+#### 简单的例子
 
 首先新建 `a.js`，输入内容：
 
@@ -84,24 +88,153 @@ module identifier 定义了 require 函数的所能接收的参数规则
 console.log(module);
 ```
 
-只有一个简单的控制台输出逻辑，执行 `node a.js` 让我们看看这里的 `module` 到底是个什么
+只有一个简单的控制台输出逻辑，执行 `node a.js` 让我们看看这里的 `module` 到底是个什么：
+
+```js
+Module {
+  id: '.',
+  exports: {},
+  parent: null,
+  filename:
+   '/Users/wfatec/workspace_git/notebook/source/module/demo/a.js',
+  loaded: false,
+  children: [],
+  paths:
+   [ '/Users/wfatec/workspace_git/notebook/source/module/demo/node_modules',
+     '/Users/wfatec/workspace_git/notebook/source/module/node_modules',
+     '/Users/wfatec/workspace_git/notebook/source/node_modules',
+     '/Users/wfatec/workspace_git/notebook/node_modules',
+     '/Users/wfatec/workspace_git/node_modules',
+     '/Users/wfatec/node_modules',
+     '/Users/node_modules',
+     '/node_modules' ] }
+```
+
+看起来我们的日常是用的 module 就是一个包含特定方法的对象，我们试着对里的每一项进行分析：
+
+- module.id: 模块的标识，一般是完全解析后的文件名(这里是一个 "."，是由于 `a.js` 是作为入口文件执行的，稍后我们会尝试引入外部模块的情况)
+
+- module.exports: 文件导出的内容，默认是一个空对象
+
+- module.parent: 最先应用该模块的模块
+
+- module.filename: 模块的完全解析后的文件名
+
+- module.loaded: 模块是否已经加载完成，或正在加载中
+
+- module.children: 被该模块第一次引用的模块
+
+- module.paths: 模块的搜索路径(该路径是一个按照优先级排列的数组，表示了搜索该模块的寻址顺序)
+
+#### 复杂的例子
+
+前面的例子中，由于我们未能涉及到模块的导入导出，因此打印的 module 对象的一些属性值为空值。因此，我们再来实现一个更复杂一些的例子来印证此前所述各字段的含义。
+
+新增 `b.js` ：
+
+```js
+function add(a, b) {
+  return a + b;
+}
+
+module.exports = add;
+
+console.log("module b: ", module);
+```
+
+修改 `a.js`：
+
+```js
+var add = require("./b");
+
+console.log("module a: ", module);
+```
+
+执行 `node a.js`后输出如下：
+
+```js
+module b:  Module {
+  id:
+   '/Users/wfatec/workspace_git/notebook/source/module/demo/b.js',
+  exports: [Function: add],
+  parent:
+   Module {
+     id: '.',
+     exports: {},
+     parent: null,
+     filename:
+      '/Users/wfatec/workspace_git/notebook/source/module/demo/a.js',
+     loaded: false,
+     children: [ [Circular] ],
+     paths:
+      [ '/Users/wfatec/workspace_git/notebook/source/module/demo/node_modules',
+        '/Users/wfatec/workspace_git/notebook/source/module/node_modules',
+        '/Users/wfatec/workspace_git/notebook/source/node_modules',
+        '/Users/wfatec/workspace_git/notebook/node_modules',
+        '/Users/wfatec/workspace_git/node_modules',
+        '/Users/wfatec/node_modules',
+        '/Users/node_modules',
+        '/node_modules' ] },
+  filename:
+   '/Users/wfatec/workspace_git/notebook/source/module/demo/b.js',
+  loaded: false,
+  children: [],
+  paths:
+   [ '/Users/wfatec/workspace_git/notebook/source/module/demo/node_modules',
+     '/Users/wfatec/workspace_git/notebook/source/module/node_modules',
+     '/Users/wfatec/workspace_git/notebook/source/node_modules',
+     '/Users/wfatec/workspace_git/notebook/node_modules',
+     '/Users/wfatec/workspace_git/node_modules',
+     '/Users/wfatec/node_modules',
+     '/Users/node_modules',
+     '/node_modules' ] }
+module a:  Module {
+  id: '.',
+  exports: {},
+  parent: null,
+  filename:
+   '/Users/wfatec/workspace_git/notebook/source/module/demo/a.js',
+  loaded: false,
+  children:
+   [ Module {
+       id:
+        '/Users/wfatec/workspace_git/notebook/source/module/demo/b.js',
+       exports: [Function: add],
+       parent: [Circular],
+       filename:
+        '/Users/wfatec/workspace_git/notebook/source/module/demo/b.js',
+       loaded: true,
+       children: [],
+       paths: [Array] } ],
+  paths:
+   [ '/Users/wfatec/workspace_git/notebook/source/module/demo/node_modules',
+     '/Users/wfatec/workspace_git/notebook/source/module/node_modules',
+     '/Users/wfatec/workspace_git/notebook/source/node_modules',
+     '/Users/wfatec/workspace_git/notebook/node_modules',
+     '/Users/wfatec/workspace_git/node_modules',
+     '/Users/wfatec/node_modules',
+     '/Users/node_modules',
+     '/node_modules' ] }
+```
+
+对比两个 module 输出的 id，parent，children 等字段，我们很容易印证此前结论。
 
 ### 源码实现
 
-为了搞清楚 NodeJS 的 CommonJS  实现，我们需要深入[源码](https://github.com/nodejs/node)进行分析。
+为了搞清楚 NodeJS 的 CommonJS 实现，我们需要深入[源码](https://github.com/nodejs/node)进行分析。
 
 NodeJS 的各模块源码主要在 [lib](https://github.com/nodejs/node/tree/master/lib) 文件夹下，本文所关注的 `module` 模块就保存在 `module.js` 中，具体内容为：
 
 ```js
-'use strict';
+"use strict";
 
-module.exports = require('internal/modules/cjs/loader').Module;
+module.exports = require("internal/modules/cjs/loader").Module;
 ```
 
 继续打开 `internal/modules/cjs/loader.js`，其中的 [Module](https://github.com/nodejs/node/blob/master/lib/internal/modules/cjs/loader.js#L104-L113) 即为真正的输出内容：
 
 ```js
-function Module(id = '', parent) {
+function Module(id = "", parent) {
   this.id = id;
   this.path = path.dirname(id);
   this.exports = {};
@@ -118,4 +251,4 @@ function Module(id = '', parent) {
 - [wiki/Modules/1.1.1](http://wiki.commonjs.org/wiki/Modules/1.1.1)
 - [node 源码](https://github.com/nodejs/node/blob/master/lib/internal/modules/cjs/loader.js)
 - [require() 源码解读](http://www.ruanyifeng.com/blog/2015/05/require.html)
-- [CommonJS规范](http://javascript.ruanyifeng.com/nodejs/module.html)
+- [CommonJS 规范](http://javascript.ruanyifeng.com/nodejs/module.html)
