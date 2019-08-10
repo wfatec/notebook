@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @version: 
+ * @Author: chao
+ * @Date: 2019-08-08 17:23:05
+ * @LastEditors: chao
+ * @LastEditTime: 2019-08-10 23:01:00
+ -->
 <!-- TOC -->
 
 - [NodeJS 的模块化实现](#nodejs-的模块化实现)
@@ -245,6 +253,8 @@ function Module(id = "", parent) {
   this.children = [];
 }
 ```
+
+对比此前分析的 module 对象，是不是更加的清晰了呢？
 
 ## 参考
 
