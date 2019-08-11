@@ -4,7 +4,7 @@
  * @Author: chao
  * @Date: 2019-08-08 17:23:05
  * @LastEditors: chao
- * @LastEditTime: 2019-08-10 23:01:00
+ * @LastEditTime: 2019-08-11 23:24:02
  -->
 <!-- TOC -->
 
@@ -225,7 +225,9 @@ module a:  Module {
      '/node_modules' ] }
 ```
 
-对比两个 module 输出的 id，parent，children 等字段，我们很容易印证此前结论。
+对比两个 module 输出的 id，parent，children 等字段，我们来做一个简要的分析。
+
+首先，`module a` 的 children 字段内容实际上就是 `module b`，因为 `module b` 是被 `module a` 第一次引用的模块。与此相对应的，`module b` 中 parent 字段内容则是 `module a`。此外，由于 `b.js` 中含有 `module.exports`，所以 `module b` 的 exports 字段内容为函数 `add`。
 
 ### 源码实现
 
@@ -239,7 +241,7 @@ NodeJS 的各模块源码主要在 [lib](https://github.com/nodejs/node/tree/mas
 module.exports = require("internal/modules/cjs/loader").Module;
 ```
 
-继续打开 `internal/modules/cjs/loader.js`，其中的 [Module](https://github.com/nodejs/node/blob/master/lib/internal/modules/cjs/loader.js#L104-L113) 即为真正的输出内容：
+继续打开 `internal/modules/cjs/loader.js`，其中的构造函数 [Module](https://github.com/nodejs/node/blob/master/lib/internal/modules/cjs/loader.js#L104-L113) 即为真正的输出内容：
 
 ```js
 function Module(id = "", parent) {
@@ -254,7 +256,7 @@ function Module(id = "", parent) {
 }
 ```
 
-对比此前分析的 module 对象，是不是更加的清晰了呢？
+对比此前分析的 module 对象，是不是更加的清晰了呢？没错，实际上我们的 module 对象应该就是构造函数 Module 的实例。
 
 ## 参考
 
