@@ -1,10 +1,10 @@
 <!--
- * @Descripttion: 
- * @version: 
+ * @Descripttion:
+ * @version:
  * @Author: chao
  * @Date: 2019-08-08 17:23:05
  * @LastEditors: chao
- * @LastEditTime: 2019-08-11 23:24:02
+ * @LastEditTime: 2019-08-12 19:32:44
  -->
 <!-- TOC -->
 
@@ -18,6 +18,8 @@
             - [简单的例子](#简单的例子)
             - [复杂的例子](#复杂的例子)
         - [源码实现](#源码实现)
+            - [构造函数 Module](#构造函数-module)
+            - [require](#require-1)
     - [参考](#参考)
 
 <!-- /TOC -->
@@ -231,6 +233,8 @@ module a:  Module {
 
 ### 源码实现
 
+#### 构造函数 Module
+
 为了搞清楚 NodeJS 的 CommonJS 实现，我们需要深入[源码](https://github.com/nodejs/node)进行分析。
 
 NodeJS 的各模块源码主要在 [lib](https://github.com/nodejs/node/tree/master/lib) 文件夹下，本文所关注的 `module` 模块就保存在 `module.js` 中，具体内容为：
@@ -258,9 +262,45 @@ function Module(id = "", parent) {
 
 对比此前分析的 module 对象，是不是更加的清晰了呢？没错，实际上我们的 module 对象应该就是构造函数 Module 的实例。
 
+#### require
+
+现在，我们已经知悉了 module 的构造函数，接下来我们需要思考一下**一个 module 是如何被加载和调用的**？
+
+我们首先回忆一下加载一个 module 的具体语法：
+
+```js
+var add = require("./b");
+```
+
+没错，就是 require，require 在查找模块路径时会根据以下规则进行：
+
+1. 是否是一个有效的路径(相对路径或绝对路径)，若是则找到对应路径下的 module 并加载
+
+2. 若不是有效路径，则依次对 module.paths 数组中的路径进行查找，找到匹配模块则终止查找并加载模块
+
+3. 若未找到匹配模块，则抛出错误
+
+我们这里传入的是一个有效路径，因此会直接将对应路径下的模块载入进来。
+
+以上都是对 require 执行过程的说明，那么这个 require 到底是什么呢？我们可以将其输出到控制台看一下：
+
+```js
+function require(path) {
+  try {
+    exports.requireDepth += 1;
+    return mod.require(path);
+  } finally {
+    exports.requireDepth -= 1;
+  }
+}
+```
+
+输出的是一个标准的 JS 函数
+
 ## 参考
 
 - [wiki/Modules/1.1.1](http://wiki.commonjs.org/wiki/Modules/1.1.1)
 - [node 源码](https://github.com/nodejs/node/blob/master/lib/internal/modules/cjs/loader.js)
 - [require() 源码解读](http://www.ruanyifeng.com/blog/2015/05/require.html)
 - [CommonJS 规范](http://javascript.ruanyifeng.com/nodejs/module.html)
+- [node-js-module-exports](https://stackify.com/node-js-module-exports/)
