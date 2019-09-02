@@ -8,6 +8,9 @@
     - [如何获取更多信息](#如何获取更多信息)
         - [什么是表达式 -- Expression](#什么是表达式----expression)
         - [数据库中的数据类型](#数据库中的数据类型)
+        - [修改数据类型：CAST 函数](#修改数据类型cast-函数)
+        - [字面量](#字面量)
+            - [字符串字面量](#字符串字面量)
     - [参考](#参考)
 
 <!-- /TOC -->
@@ -75,5 +78,54 @@ ASC 为从小到大排序， DESC 为从大到小排序，且 ORDER BY 语法不
 - **interval**: 用于存储时间间隔，如 year, month, day, time，包括 `INTERVAL`。
 
 许多数据库也会提供一些扩展数据类型，例如 `MONEY/CURRENCY` 和 `SERIAL/ROWID/AUTOINCREMENT/IDENTITY` 等
+
+### 修改数据类型：CAST 函数
+
+CAST 函数用于将字面量或列中的值转化为特定的数据类型。语法为：
+
+```sql
+CAST (expression AS data_type)
+```
+
+- expression: SQLServer 表达式；
+- AS：用于分割待处理的数据和要转换的数据类型；
+- data_type: 要转换的数据类型
+
+举个栗子：
+
+```sql
+SELECT CAST('3.141' AS DECIMAL(10,2))
+```
+
+结果为：3.14
+> 注意：原来的 '3.141' 会对第三个小数位进行四舍五入。
+
+### 字面量
+
+#### 字符串字面量
+
+用**单引号**包裹的字符序列，下面我们来感受一下具体的应用。
+
+当执行
+
+```sql
+SELECT VendWebPage, VendName FROM Vendors
+```
+
+时，我们的结果是这样的：
+
+![img](./assets/sql1.jpg)
+
+我们可以增加说明字符串：
+
+```sql
+SELECT VendWebPage, 'is the Web site for', VendName FROM Vendors
+```
+
+结果为：
+
+![img](./assets/sql2.jpg)
+
+显然，对于含义不是很清晰的查询结果，增加字符串描述能够有效的提高 SQL 结果的可读性。
 
 ## 参考
