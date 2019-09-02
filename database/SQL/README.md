@@ -1,10 +1,13 @@
 <!-- TOC -->
 
 - [SQL 语法基础](#sql-语法基础)
-    - [SELECT](#select)
+    - [简单查询](#简单查询)
         - [SELECT 语法规则](#select-语法规则)
         - [去重复行](#去重复行)
         - [排序](#排序)
+    - [如何获取更多信息](#如何获取更多信息)
+        - [什么是表达式 -- Expression](#什么是表达式----expression)
+        - [数据库中的数据类型](#数据库中的数据类型)
     - [参考](#参考)
 
 <!-- /TOC -->
@@ -13,13 +16,15 @@
 
 > 本文是笔者阅读《SQL Queries for Mere Mortals, 4th Edition》之后的一些总结和体会，用于做减法，便于平时查阅，如果对于 SQL 语法还不是很熟悉，那么建议大家读一下本书，相信会有所进益。
 
-## SELECT
+## 简单查询
 
 ### SELECT 语法规则
 
 ```sql
 SELECT column_name FROM table_name WHERE SearchCondition GROUP BY column_name HAVING SearchCondition
 ```
+
+其中 column_name 可以通过逗号隔开，从而匹配多个字段。
 
 ### 去重复行
 
@@ -34,5 +39,41 @@ SELECT Statement ORDER BY column_name ASC/DESC
 ```
 
 ASC 为从小到大排序， DESC 为从大到小排序，且 ORDER BY 语法不会改变 table 原本的顺序。
+
+## 如何获取更多信息
+
+### 什么是表达式 -- Expression
+
+> 如果不仅仅要获取简单的列信息，那么你将需要使用表达式。
+
+在很多时候，我们不仅仅只是需要将列的值筛选出来，有时候我们可能需要知道一些额外的信息，例如：
+
+- 数据的总数
+
+- 通过开始时间和结束时间获取时间间隔
+
+- 根据订单估算每小时的成交率
+
+### 数据库中的数据类型
+
+数据库中的数据类型主要有 7 大类：
+
+- **character**: 分为固定长度（`CHARACTER`/`CHAR`）和可变长度（`CHARACTER VARYING`/`CHAR VARYING`/`VARCHAR`），最大字符长度由数据库决定。当字符长度超出系统定义的最大长度时（通常是 255 或者 1,024 个字符），我们需要使用 `CHARACTER LARGE OBJECT`,  `CHAR LARGE OBJECT` 或者是 `CLOB`，在许多系统中，`CLOB` 的别名为 `TEXT` 或 `MEMO`。
+
+- **national character**: 大多数特性与 `character` 类似，主要作用是为了增强 oracle 的字符处理能力，因为 `NCHAR` 数据类型可以提供对亚洲使用定长多字节编码的支持，而数据库字符集则不能。包括 `NCHAR`, `NVARCHAR2`, `NCLOB`。
+
+- **binary**: 使用 `BINARY LARGE OBJECT` 或 `BLOB` 来存储二进制数据，例如图片，音频，视频，或是复杂的嵌入式文件，如 word 等
+
+- **exact numeric**: 确数集合，包括 `NUMERIC`, `DECIMAL`, `DEC`, `SMALLINT`, `INTEGER`, `INT`, 和 `BIGINT`。
+
+- **approximate numeric**: 约数集合，包括 `FLOAT`, `REAL`, and `DOUBLE PRECISION`
+
+- **Boolean**: `true` or `false`
+
+- **datetime**: 保存日期，时间，或是两者的组合类型，包括 `DATE`, `TIME`, 和 `TIMESTAMP` 。
+
+- **interval**: 用于存储时间间隔，如 year, month, day, time，包括 `INTERVAL`。
+
+许多数据库也会提供一些扩展数据类型，例如 `MONEY/CURRENCY` 和 `SERIAL/ROWID/AUTOINCREMENT/IDENTITY` 等
 
 ## 参考
