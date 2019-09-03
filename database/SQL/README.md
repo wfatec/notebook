@@ -18,6 +18,7 @@
             - [表达式命名](#表达式命名)
             - [Mathematical 表达式](#mathematical-表达式)
             - [Date/Time 表达式](#datetime-表达式)
+        - [Null](#null)
     - [参考](#参考)
 
 <!-- /TOC -->
@@ -194,6 +195,10 @@ SELECT OrderNumber, DATEDIFF(ShipDate,OrderDate) AS DaysToShip FROM Orders
 这里我们使用了 MySQL 提供的 `DATEDIFF` 函数来计算时间间隔，事实上不同的数据库都提供了各自的日期函数，非常便捷。
 
 ![img](./assets/sql6.jpg)
+
+### Null
+
+Null 在数据库中表示没有值，或者未知数据
 
 
 ## 参考
