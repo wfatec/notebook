@@ -11,6 +11,13 @@
         - [修改数据类型：CAST 函数](#修改数据类型cast-函数)
         - [字面量](#字面量)
             - [字符串字面量](#字符串字面量)
+            - [数字字面量](#数字字面量)
+            - [日期时间字面量](#日期时间字面量)
+        - [SQL 表达式](#sql-表达式)
+            - [Concatenation 表达式](#concatenation-表达式)
+            - [表达式命名](#表达式命名)
+            - [Mathematical 表达式](#mathematical-表达式)
+            - [Date/Time 表达式](#datetime-表达式)
     - [参考](#参考)
 
 <!-- /TOC -->
@@ -127,5 +134,66 @@ SELECT VendWebPage, 'is the Web site for', VendName FROM Vendors
 ![img](./assets/sql2.jpg)
 
 显然，对于含义不是很清晰的查询结果，增加字符串描述能够有效的提高 SQL 结果的可读性。
+
+#### 数字字面量
+
+```
+427
+-11.252
+.532 0.3E-3
+```
+
+#### 日期时间字面量
+
+- DATE: YY-MM-DD，有些数据库也会使用 MM/DD/YY 的形式，具体需要根据数据库文档来确定
+
+- TIME: hh:mm:ss
+
+- TIMESTAMP: 时间戳
+
+### SQL 表达式
+
+#### Concatenation 表达式
+
+由于笔者使用的是 MySQL 数据库，因此这里的 Concatenation 表达式需要借助函数 CONCAT 来实现，
+
+```sql
+SELECT CONCAT(EmpFirstName, ' ', EmpLastName) , CONCAT('Phone Number: ', EmpPhoneNumber) FROM Employees
+```
+
+结果为：
+
+![img](./assets/sql3.jpg)
+
+#### 表达式命名
+
+范式：`SELECT expression AS column_name ->`
+
+此前的 sql 语句可以修改为：
+
+```sql
+SELECT CONCAT(EmpFirstName, ' ', EmpLastName) AS EmployeeName , CONCAT('Phone Number: ', EmpPhoneNumber) AS EmpPhoneNumber FROM Employees
+```
+
+![img](./assets/sql4.jpg)
+
+#### Mathematical 表达式
+
+```sql
+SELECT CONCAT(AgtFirstName, ' ', AgtLastName) AS AgentName, Salary + (50000 * CommissionRate)  AS ProjectedIncome FROM Agents
+```
+
+![img](./assets/sql5.jpg)
+
+#### Date/Time 表达式
+
+```sql
+SELECT OrderNumber, DATEDIFF(ShipDate,OrderDate) AS DaysToShip FROM Orders
+```
+
+这里我们使用了 MySQL 提供的 `DATEDIFF` 函数来计算时间间隔，事实上不同的数据库都提供了各自的日期函数，非常便捷。
+
+![img](./assets/sql6.jpg)
+
 
 ## 参考
