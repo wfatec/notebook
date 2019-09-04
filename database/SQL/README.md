@@ -19,6 +19,16 @@
             - [Mathematical 表达式](#mathematical-表达式)
             - [Date/Time 表达式](#datetime-表达式)
         - [Null](#null)
+    - [数据过滤](#数据过滤)
+        - [5 种常见的断言类型](#5-种常见的断言类型)
+            - [Comparison 比较](#comparison-比较)
+            - [Between 区间](#between-区间)
+            - [IN 成员关系](#in-成员关系)
+            - [LIKE 模式匹配](#like-模式匹配)
+            - [IS NULL](#is-null)
+        - [WHERE 表达式](#where-表达式)
+        - [条件的优先级](#条件的优先级)
+        - [Less 优于 More](#less-优于-more)
     - [参考](#参考)
 
 <!-- /TOC -->
@@ -199,6 +209,104 @@ SELECT OrderNumber, DATEDIFF(ShipDate,OrderDate) AS DaysToShip FROM Orders
 ### Null
 
 Null 在数据库中表示没有值，或者未知数据
+
+## 数据过滤
+
+### 5 种常见的断言类型
+
+#### Comparison 比较
+
+1. = 等于
+2. <> 不等于
+3. < 小于
+4. \> 大于
+5. <= 小于等于
+6. \>= 大于等于
+
+#### Between 区间
+
+通常用 AND 连接符连接两个数值
+
+#### IN 成员关系
+
+用于判断给定值是否匹配给定列表中的每一项
+
+#### LIKE 模式匹配
+
+用于判断一个字符串表达式是否匹配特定的字符串样式。这里着重介绍两个特殊符号 `%` 和 `_`：
+
+1. %：表示 0 或多个任意字符
+
+2. _: 表示 1 个任意字符
+
+举个例子：
+
+'Sha%' -> **Sha**nnon, **Sha**wn
+'Ro_' -> **Ro**b, **Ro**y
+
+当需要匹配的字符串是 MX_445这样的值时，我们需要使用 LIKE 的 ESCAPE 选项：
+
+```sql
+SELECT ProductName, ProductCode FROM Products WHERE ProductCode LIKE 'G\_00_' ESCAPE '\'
+```
+
+当我们将 `\` 定义为 ESCAPE 后，数据库系统会将该字符忽略，并对其后面的第一个字符取字面量。
+
+#### IS NULL
+
+判断值是否为 null
+
+### WHERE 表达式
+
+```sql
+SELECT CustFirstName, CustLastName FROM Customers WHERE CustState = 'WA'
+
+SELECT CustFirstName, CustLastName FROM Customers WHERE CustState = 'WA' AND CustState = 'MA'
+
+SELECT CustFirstName, CustLastName FROM Customers WHERE CustState = 'WA' OR CustState = 'MA'
+
+SELECT FirstName, LastName FROM Staff WHERE DateHired BETWEEN '1986-07-01' AND '1986-07-31'
+
+SELECT FirstName, LastName FROM Staff WHERE DateHired NOT BETWEEN '1986-07-01' AND '1986-07-31'
+
+SELECT CustLastName, CustirstName From Customers WHERE CustLastName LIKE 'Mar%'
+```
+
+### 条件的优先级
+
+我们在使用条件语句时，各条件出现的顺序也会影响到数据库的执行过程。来看一个例子：
+
+```sql
+SELECT CustomerID, OrderDate, ShipDate FROM Orders WHERE ShipDate = OrderDate AND CustomerID = 1001
+```
+
+默认情况下，数据库会按照从左到右的顺序执行条件语句，也就是说会先找到 ShipDate = OrderDate 的所有行，然后再筛选出这些行中包含 CustomerID = 1001 的所有行。
+
+但是当条件语句中包含更多类型的连接符时，就需要遵循一定的优先级顺序了，具体优先级从高到低为：
+
+1. 正负号 +/- -> 
+2. *,/ 
+3. 加减号 +/- 
+4. =,<>,<,>,<=,>=,BETWEEN,IN,LIKE,IS NULL
+5. NOT
+6. AND
+7. OR
+
+当然，为了更清晰的表明查询的先后顺序，我们还是尽量用圆括号来消除歧义。
+
+### Less 优于 More
+
+回到此前的一个 SQL 语句：
+
+```sql
+SELECT CustomerID, OrderDate, ShipDate FROM Orders WHERE ShipDate = OrderDate AND CustomerID = 1001
+```
+
+由于 ShipDate = OrderDate 条件更加复杂，而 CustomerID = 1001 则更简单明确，且能排除掉更多的数据，因此应该将 CustomerID = 1001 放到前面：
+
+```sql
+SELECT CustomerID, OrderDate, ShipDate FROM Orders WHERE CustomerID = 1001 AND ShipDate = OrderDate
+```
 
 
 ## 参考
