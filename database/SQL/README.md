@@ -29,6 +29,10 @@
         - [WHERE 表达式](#where-表达式)
         - [条件的优先级](#条件的优先级)
         - [Less 优于 More](#less-优于-more)
+    - [INNER JOIN](#inner-join)
+        - [设置 Table 别名](#设置-table-别名)
+        - [插入 SELECT 语句](#插入-select-语句)
+        - [在 JOINs 中插入 JOINs](#在-joins-中插入-joins)
     - [参考](#参考)
 
 <!-- /TOC -->
@@ -308,5 +312,66 @@ SELECT CustomerID, OrderDate, ShipDate FROM Orders WHERE ShipDate = OrderDate AN
 SELECT CustomerID, OrderDate, ShipDate FROM Orders WHERE CustomerID = 1001 AND ShipDate = OrderDate
 ```
 
+## INNER JOIN
+
+> 组合两个表中的记录，从而建立一个新的**逻辑表**。
+
+语法结构：
+
+![img](./assets/sql7.jpg)
+
+举个例子：
+
+```sql
+SELECT RecipeTitle, Preparation, RecipeClassDescription FROM Recipe_Classes INNER JOIN Recipes ON Recipe_Classes.RecipeClassID = Recipes.RecipeClassID
+```
+
+这样就能将 Recipe_Classes 和 Recipes 两张表中的字段进行组合，从而实现联合查询，查询条件的连接符为 ON ，有点类似于单表查询的 WHERE，查询条件为 `Recipe_Classes.RecipeClassID = Recipes.RecipeClassID` 即通过 RecipeClassID 字段进行关联。
+
+为了表示更加清晰，我们可以为每个列增加所属表名：
+
+```sql
+SELECT Recipes.RecipeTitle, Recipes.Preparation, Recipe_Classes.RecipeClassDescription FROM Recipe_Classes INNER JOIN Recipes ON Recipe_Classes.RecipeClassID = Recipes.RecipeClassID
+```
+
+注意：有些数据库系统可能并没有提供 JOIN 关键字，但没有关系，在类数据库中我们可以使用 WHERE 语法：
+
+```sql
+SELECT Recipes.RecipeTitle, Recipes.Preparation, Recipe_Classes.RecipeClassDescription FROM Recipe_Classes, Recipes WHERE Recipe_Classes.RecipeClassID = Recipes.RecipeClassID
+```
+
+效果是一样的，此外，像 MySQL 等数据库，实际上两种语法都是支持的。
+
+最终查询结果为：
+
+![img](./assets/sql8.jpg)
+
+### 设置 Table 别名
+
+使用 AS 语法：
+
+```sql
+SELECT R.RecipeTitle, R.Preparation, RC.RecipeClassDescription FROM Recipe_Classes AS RC INNER JOIN Recipes AS R ON RC.RecipeClassID = R.RecipeClassID
+```
+
+### 插入 SELECT 语句
+
+```sql
+SELECT R.RecipeTitle, R.Preparation, RCFiltered.ClassName FROM (SELECT RecipeClassID, RecipeClassDescription AS ClassName FROM Recipe_Classes AS RC WHERE RC.RecipeClassDescription = 'Main course' OR RC.RecipeClassDescription = 'Dessert') AS RCFiltered INNER JOIN Recipes AS R ON RCFiltered.RecipeClassID = R.RecipeClassID
+```
+
+### 在 JOINs 中插入 JOINs
+
+```sql
+SELECT Recipe_Classes.RecipeClassDescription, Recipes.RecipeTitle, Recipes.Preparation, Ingredients.IngredientName, Recipe_Ingredients.RecipeSeqNo, Recipe_Ingredients.Amount, Measurements.MeasurementDescription
+FROM
+	(
+		(
+			(
+				Recipe_Classes INNER JOIN Recipes ON Recipe_Classes.RecipeClassID = Recipes.RecipeClassID 
+			) INNER JOIN Recipe_Ingredients ON Recipes.RecipeID = Recipe_Ingredients.RecipeID 
+		) INNER JOIN Ingredients ON Ingredients.IngredientID = Recipe_Ingredients.IngredientID 
+	) INNER JOIN Measurements ON Measurements.MeasureAmountID = Recipe_Ingredients.MeasureAmountID  ORDER BY RecipeTitle, RecipeSeqNo
+```
 
 ## 参考
