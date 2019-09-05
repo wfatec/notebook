@@ -33,6 +33,7 @@
         - [设置 Table 别名](#设置-table-别名)
         - [插入 SELECT 语句](#插入-select-语句)
         - [在 JOINs 中插入 JOINs](#在-joins-中插入-joins)
+    - [OUTER JOINs](#outer-joins)
     - [参考](#参考)
 
 <!-- /TOC -->
@@ -46,7 +47,16 @@
 ### SELECT 语法规则
 
 ```sql
-SELECT column_name FROM table_name WHERE SearchCondition GROUP BY column_name HAVING SearchCondition
+SELECT
+	column_name 
+FROM
+	table_name 
+WHERE
+	SearchCondition 
+GROUP BY
+	column_name 
+HAVING
+	SearchCondition
 ```
 
 其中 column_name 可以通过逗号隔开，从而匹配多个字段。
@@ -187,7 +197,11 @@ SELECT CONCAT(EmpFirstName, ' ', EmpLastName) , CONCAT('Phone Number: ', EmpPhon
 此前的 sql 语句可以修改为：
 
 ```sql
-SELECT CONCAT(EmpFirstName, ' ', EmpLastName) AS EmployeeName , CONCAT('Phone Number: ', EmpPhoneNumber) AS EmpPhoneNumber FROM Employees
+SELECT
+	CONCAT( EmpFirstName, ' ', EmpLastName ) AS EmployeeName,
+	CONCAT( 'Phone Number: ', EmpPhoneNumber ) AS EmpPhoneNumber 
+FROM
+	Employees
 ```
 
 ![img](./assets/sql4.jpg)
@@ -195,7 +209,11 @@ SELECT CONCAT(EmpFirstName, ' ', EmpLastName) AS EmployeeName , CONCAT('Phone Nu
 #### Mathematical 表达式
 
 ```sql
-SELECT CONCAT(AgtFirstName, ' ', AgtLastName) AS AgentName, Salary + (50000 * CommissionRate)  AS ProjectedIncome FROM Agents
+SELECT
+	CONCAT( AgtFirstName, ' ', AgtLastName ) AS AgentName,
+	Salary + ( 50000 * CommissionRate ) AS ProjectedIncome 
+FROM
+	Agents
 ```
 
 ![img](./assets/sql5.jpg)
@@ -303,18 +321,34 @@ SELECT CustomerID, OrderDate, ShipDate FROM Orders WHERE ShipDate = OrderDate AN
 回到此前的一个 SQL 语句：
 
 ```sql
-SELECT CustomerID, OrderDate, ShipDate FROM Orders WHERE ShipDate = OrderDate AND CustomerID = 1001
+SELECT
+	CustomerID,
+	OrderDate,
+	ShipDate 
+FROM
+	Orders 
+WHERE
+	ShipDate = OrderDate 
+	AND CustomerID = 1001
 ```
 
 由于 ShipDate = OrderDate 条件更加复杂，而 CustomerID = 1001 则更简单明确，且能排除掉更多的数据，因此应该将 CustomerID = 1001 放到前面：
 
 ```sql
-SELECT CustomerID, OrderDate, ShipDate FROM Orders WHERE CustomerID = 1001 AND ShipDate = OrderDate
+SELECT
+	CustomerID,
+	OrderDate,
+	ShipDate 
+FROM
+	Orders 
+WHERE
+	CustomerID = 1001 
+	AND ShipDate = OrderDate
 ```
 
 ## INNER JOIN
 
-> 组合两个表中的记录，从而建立一个新的**逻辑表**。
+> 连接结果仅包含符合连接条件的行，参与连接的两个表都应该符合连接条件。
 
 语法结构：
 
@@ -323,7 +357,13 @@ SELECT CustomerID, OrderDate, ShipDate FROM Orders WHERE CustomerID = 1001 AND S
 举个例子：
 
 ```sql
-SELECT RecipeTitle, Preparation, RecipeClassDescription FROM Recipe_Classes INNER JOIN Recipes ON Recipe_Classes.RecipeClassID = Recipes.RecipeClassID
+SELECT
+	RecipeTitle,
+	Preparation,
+	RecipeClassDescription 
+FROM
+	Recipe_Classes
+	INNER JOIN Recipes ON Recipe_Classes.RecipeClassID = Recipes.RecipeClassID
 ```
 
 这样就能将 Recipe_Classes 和 Recipes 两张表中的字段进行组合，从而实现联合查询，查询条件的连接符为 ON ，有点类似于单表查询的 WHERE，查询条件为 `Recipe_Classes.RecipeClassID = Recipes.RecipeClassID` 即通过 RecipeClassID 字段进行关联。
@@ -331,13 +371,27 @@ SELECT RecipeTitle, Preparation, RecipeClassDescription FROM Recipe_Classes INNE
 为了表示更加清晰，我们可以为每个列增加所属表名：
 
 ```sql
-SELECT Recipes.RecipeTitle, Recipes.Preparation, Recipe_Classes.RecipeClassDescription FROM Recipe_Classes INNER JOIN Recipes ON Recipe_Classes.RecipeClassID = Recipes.RecipeClassID
+SELECT
+	Recipes.RecipeTitle,
+	Recipes.Preparation,
+	Recipe_Classes.RecipeClassDescription 
+FROM
+	Recipe_Classes
+	INNER JOIN Recipes ON Recipe_Classes.RecipeClassID = Recipes.RecipeClassID
 ```
 
 注意：有些数据库系统可能并没有提供 JOIN 关键字，但没有关系，在类数据库中我们可以使用 WHERE 语法：
 
 ```sql
-SELECT Recipes.RecipeTitle, Recipes.Preparation, Recipe_Classes.RecipeClassDescription FROM Recipe_Classes, Recipes WHERE Recipe_Classes.RecipeClassID = Recipes.RecipeClassID
+SELECT
+	Recipes.RecipeTitle,
+	Recipes.Preparation,
+	Recipe_Classes.RecipeClassDescription 
+FROM
+	Recipe_Classes,
+	Recipes 
+WHERE
+	Recipe_Classes.RecipeClassID = Recipes.RecipeClassID
 ```
 
 效果是一样的，此外，像 MySQL 等数据库，实际上两种语法都是支持的。
@@ -357,7 +411,22 @@ SELECT R.RecipeTitle, R.Preparation, RC.RecipeClassDescription FROM Recipe_Class
 ### 插入 SELECT 语句
 
 ```sql
-SELECT R.RecipeTitle, R.Preparation, RCFiltered.ClassName FROM (SELECT RecipeClassID, RecipeClassDescription AS ClassName FROM Recipe_Classes AS RC WHERE RC.RecipeClassDescription = 'Main course' OR RC.RecipeClassDescription = 'Dessert') AS RCFiltered INNER JOIN Recipes AS R ON RCFiltered.RecipeClassID = R.RecipeClassID
+SELECT
+	R.RecipeTitle,
+	R.Preparation,
+	RCFiltered.ClassName 
+FROM
+	(
+	SELECT
+		RecipeClassID,
+		RecipeClassDescription AS ClassName 
+	FROM
+		Recipe_Classes AS RC 
+	WHERE
+		RC.RecipeClassDescription = 'Main course' 
+		OR RC.RecipeClassDescription = 'Dessert' 
+	) AS RCFiltered
+	INNER JOIN Recipes AS R ON RCFiltered.RecipeClassID = R.RecipeClassID
 ```
 
 ### 在 JOINs 中插入 JOINs
@@ -373,5 +442,45 @@ FROM
 		) INNER JOIN Ingredients ON Ingredients.IngredientID = Recipe_Ingredients.IngredientID 
 	) INNER JOIN Measurements ON Measurements.MeasureAmountID = Recipe_Ingredients.MeasureAmountID  ORDER BY RecipeTitle, RecipeSeqNo
 ```
+
+## OUTER JOINs
+
+> 连接结果不仅包含符合连接条件的行同时也包含自身不符合条件的行。包括左外连接、右外连接和全外连接。
+
+- **左外连接**：左边表数据行全部保留，右边表保留符合连接条件的行。
+
+- **右外连接**：右边表数据行全部保留，左边表保留符合连接条件的行。
+
+- **全外连接**：左外连接 union 右外连接。
+
+接下来我们以左外连接为例，来说明其特点。
+
+1. 展示所有食谱类型及其所对应的食谱。
+
+```sql
+SELECT
+	Recipe_Classes.RecipeClassDescription,
+	Recipes.RecipeTitle 
+FROM
+	Recipe_Classes
+	LEFT OUTER JOIN Recipes ON Recipe_Classes.RecipeClassID = Recipes.RecipeClassID
+```
+
+![img](./assets/sql9.jpg)
+
+2. 展示所有还未有任何相应食谱的食谱类型。
+
+```sql
+SELECT
+	Recipe_Classes.RecipeClassDescription,
+	Recipes.RecipeTitle 
+FROM
+	Recipe_Classes
+	LEFT OUTER JOIN Recipes ON Recipe_Classes.RecipeClassID = Recipes.RecipeClassID 
+WHERE
+	Recipes.RecipeID IS NULL
+```
+
+![img](./assets/sql10.jpg)
 
 ## 参考
