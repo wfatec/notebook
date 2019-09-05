@@ -34,6 +34,7 @@
         - [插入 SELECT 语句](#插入-select-语句)
         - [在 JOINs 中插入 JOINs](#在-joins-中插入-joins)
     - [OUTER JOINs](#outer-joins)
+    - [UNION](#union)
     - [参考](#参考)
 
 <!-- /TOC -->
@@ -483,4 +484,20 @@ WHERE
 
 ![img](./assets/sql10.jpg)
 
+## UNION
+
+> 一次性查询多条SQL语句，并将每一条SELECT查询的结果合并成一个结果集返回。
+
+Union 的使用规则：
+
+- 必须由两条或者两条以上的 SELECT 语句组成，语句之间使用 Union 链接。
+
+- 每个查询必须包含相同的列、表达式或者聚合函数，他们出现的顺序可以不一致（这里指查询字段相同，表不一定一样）
+
+- 列的数据类型必须兼容，兼容的含义是必须是数据库可以隐含的转换他们的类型
+
+具体用法可以查看 [MySQL 必知必会：组合查询（Union）](https://segmentfault.com/a/1190000007926959)
+
 ## 参考
+
+- [MySQL 必知必会：组合查询（Union）](https://segmentfault.com/a/1190000007926959)
