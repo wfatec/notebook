@@ -3,6 +3,9 @@
 - [JavaScript 中有趣的特性](#javascript-中有趣的特性)
     - [基本类型的包装类型](#基本类型的包装类型)
     - [JavaScript 词法](#javascript-词法)
+    - [解构赋值](#解构赋值)
+        - [我为什么喜欢解构赋值？](#我为什么喜欢解构赋值)
+        - [解构赋值默认值生效的问题](#解构赋值默认值生效的问题)
 
 <!-- /TOC -->
 
@@ -16,7 +19,7 @@
 
 ```js
 const num = 97;
-console.log(num.toString(16))
+console.log(num.toString(16));
 ```
 
 输出结果为`61`。看起来非常理所当然，但是我们进一步思考，如果直接执行
@@ -40,25 +43,25 @@ Uncaught SyntaxError: Invalid or unexpected token
 所以我们基于此大概知道了，虽然基本类型的赋值与引用类型不尽相同，但是其底层一定也有类似引用类型一样的构造器，从而实现基本类型的一些内置方法。而 `js` 也提供了基本类型的构造器函数供开发者调用。
 
 ```js
-console.log(Number(97).toString(16))
+console.log(Number(97).toString(16));
 ```
 
 此时方能输出正确的结果。而这个时候`Number(97)`实际上就做了类似变量赋值的处理。
 
 ```js
-typeof Number(97) === "number"
+typeof Number(97) === "number";
 ```
 
 而如果使用`new`来创建：
 
 ```js
-console.log((new Number(97)).toString(16))
+console.log(new Number(97).toString(16));
 ```
 
 结果仍是正确的，但此时：
 
 ```js
-typeof new Number(97) === "object"
+typeof new Number(97) === "object";
 ```
 
 可见，`new`方法会将基本类型的值转化为引用类型，而同时其内置方法也会继承过来。
@@ -77,9 +80,9 @@ typeof new Number(97) === "object"
 而十进制数有一个特殊的用法，那就是可以带小数：
 
 ```js
-10.3
-.3
-10.
+10.3;
+0.3;
+10;
 ```
 
 这几种写法都是可以的，联想此前的`97.toString()`我们就能发现，当词法分析器分析到`97.`的时候，默认会将`.`看作是一个小数点，因此当发现小数点后面的字符不是`Number`时，就会抛出以下错误：
@@ -91,9 +94,70 @@ Uncaught SyntaxError: Invalid or unexpected token
 因此，为了让`.`符号被识别为一个独立的 `token` 而不是小数点，我们可以用空格或增加一个`.`等方式实现：
 
 ```js
-97 .toString()
-97..toString()
+(97).toString();
+(97).toString();
 ```
 
 这两种方式都能够将`.`与之前的数字字符进行隔离，从而被词法分析器识别为单独的 `token`。
 
+## 解构赋值
+
+### 我为什么喜欢解构赋值？
+
+在拿到一个对象或数组时，我通常习惯用解构的方式来进行赋值：
+
+```js
+const { aa, bb, cc } = obj || {};
+const [dd, ee, ff] = arr || [];
+```
+
+这样做有以下几个好处:
+
+1. 代码整体较为简洁，逻辑清晰
+
+2. 容错性较好，无需加入一些难看的容错判断
+
+3. 可以进行批量赋值
+
+如果不实用结构赋值的方式，上面的两行代码可能会是这样：
+
+```js
+const aa = obj && obj.aa;
+const bb = obj && obj.bb;
+const cc = obj && obj.cc;
+const dd = isArray(arr) && arr[0];
+const ee = isArray(arr) && arr[1];
+const ff = isArray(arr) && arr[2];
+```
+
+这么一对比，是不是更为明显了呢？
+
+### 解构赋值默认值生效的问题
+
+在实际使用过程中，尤其是被解构的对象和数组是通过异步请求的方式从后端获取的，我们无法确定返回值是否符合需求，这个时候就需要我们设置解构赋值的默认值，类似这样：
+
+```js
+const { aa = 1 } = obj || {};
+const [bb = 1] = arr || [];
+```
+
+这样，当 obj 中没有字段 `aa` 或 `aa` 字段值为 `undefined` 时， `aa` 将使用默认值 1。
+
+注意：**当 obj 中 `aa` 字段为 `null`, `''`, `false` 或 `0` 时，默认值不会生效**，例如：
+
+```js
+const { aa = 1 } = {};                  // 1
+const { aa = 1 } = { aa: undefined };   // 1
+const { aa = 1 } = { aa: null };        // null
+const { aa = 1 } = { aa: '' };          // ''
+const { aa = 1 } = { aa: false };       // false
+const { aa = 1 } = { aa: 0 };           // 0
+```
+
+数组的情况与之类似，我此前就犯了个错，误认为 
+
+```js
+const { aa = 1 } = { aa: null };
+```
+
+时，`aa` 值会使用默认值 1，造成了 bug，希望大家不要再犯同样的错～
