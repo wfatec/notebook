@@ -6,6 +6,7 @@
     - [解构赋值](#解构赋值)
         - [我为什么喜欢解构赋值？](#我为什么喜欢解构赋值)
         - [解构赋值默认值生效的问题](#解构赋值默认值生效的问题)
+    - [split 妙用](#split-妙用)
 
 <!-- /TOC -->
 
@@ -146,18 +147,74 @@ const [bb = 1] = arr || [];
 注意：**当 obj 中 `aa` 字段为 `null`, `''`, `false` 或 `0` 时，默认值不会生效**，例如：
 
 ```js
-const { aa = 1 } = {};                  // 1
-const { aa = 1 } = { aa: undefined };   // 1
-const { aa = 1 } = { aa: null };        // null
-const { aa = 1 } = { aa: '' };          // ''
-const { aa = 1 } = { aa: false };       // false
-const { aa = 1 } = { aa: 0 };           // 0
+const { aa = 1 } = {}; // 1
+const { aa = 1 } = { aa: undefined }; // 1
+const { aa = 1 } = { aa: null }; // null
+const { aa = 1 } = { aa: "" }; // ''
+const { aa = 1 } = { aa: false }; // false
+const { aa = 1 } = { aa: 0 }; // 0
 ```
 
-数组的情况与之类似，我此前就犯了个错，误认为 
+数组的情况与之类似，我此前就犯了个错，误认为
 
 ```js
 const { aa = 1 } = { aa: null };
 ```
 
 时，`aa` 值会使用默认值 1，造成了 bug，希望大家不要再犯同样的错～
+
+## split 妙用
+
+最近研究 material-ui 源码时，遇到一个有趣的问题：material-ui 的文档是通过解析 markdown 文件动态生成的，markdown 文件内容大概是这样：
+
+```md
+## Contained Buttons（实心按钮）
+
+[实心按钮](https://material.io/design/components/buttons.html#contained-button)表示高度的强调, 根据他们的立体效果和填充颜色来区分彼此。 它们用于触发应用程序所具有的主要功能。
+
+以下演示的最后一个例子演示了如何使用上传按钮。
+
+{{"demo": "pages/components/buttons/ContainedButtons.js"}}
+
+## Text Buttons（文本按钮）
+
+[文本按钮](https://material.io/design/components/buttons.html#text-button)通常用于不太醒目的操作, 包括那些位于:
+
+- 对话框中
+- 卡片中
+
+在卡片中，使用文本按钮有助于保持卡片内容的醒目程度。
+
+{{"demo": "pages/components/buttons/TextButtons.js"}}
+
+## Outlined Buttons（描边按钮）
+```
+
+在解析过程中，会通过 `parseMarkdown.js` 的 `getContent()` 方法将 markdown 字符串分割成数组：
+
+```js
+export function getContents(markdown) {
+  return markdown
+    .replace(headerRegExp, "") // Remove header information
+    .split(/^{{("demo":[^}]*)}}$/gm) // Split markdown into an array, separating demos
+    .filter(content => !emptyRegExp.test(content)); // Remove empty lines
+}
+```
+
+注意这里的 **“.split(/^{{("demo":[^}]*)}}$/gm)”** 这里会以 `{{"demo": "pages/components/buttons/TextButtons.js"}}` 为分割符进行分割，并且会在结果中保留分割符，为什么会这样的？实际上就是正则表达式中的 `()` 在起作用，他会保留括号中的部分，我们测试一下：
+
+```js
+let str = "aaa,bbb,ccc";
+console.log(str.split(/(,)/))
+console.log(str.split(/,/))
+```
+
+结果为：
+
+```
+["aaa", ",", "bbb", ",", "ccc"]
+["aaa", "bbb", "ccc"]
+```
+
+符合预期。
+
