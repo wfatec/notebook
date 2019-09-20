@@ -9,6 +9,7 @@
         - [`import`中的解构赋值](#import中的解构赋值)
         - [`export`导出解构对象](#export导出解构对象)
         - [从类库直接`export`指定方法](#从类库直接export指定方法)
+    - [自动引入 react](#自动引入-react)
 
 <!-- /TOC -->
 
@@ -247,3 +248,21 @@ module.exports = {...xxxlib}
 export {method1, method2} from "xxxlib"
 ```
 这时`method1`和`method2`将会同其它导出项一起`export`出去，非常简洁。
+
+## 自动引入 react
+
+1. 使用[babel-plugin-react-require](https://github.com/vslinko/babel-plugin-react-require)
+
+通过 `babel-plugin-react-require` 来实现`react`的自动导入，实际上该插件的功能非常简单，就是在转译时，在文件头插入`import React from 'react';`。同时需要注意的是，该插件**只对未继承`React.Component`的无状态函数式组件生效**，因此对于其它`react`函数，则仍需手动引入`react`!
+
+2. 使用 webpack 自带的 ProvidePlugin
+
+ProvidePlugin 可以让我们无需引入的情况下，以全局的模式直接使用模块变量。因此我们可以在插件中使用：
+
+```js
+new webpack.ProvidePlugin({
+    'React': 'react'
+})
+```
+
+这样，我们就能够在不手动引入 react 的情况下直接使用了。
