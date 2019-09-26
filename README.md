@@ -29,3 +29,5 @@
 - [安全](https://github.com/wfatec/notebook/tree/master/safe)
 
 - [数据库](https://github.com/wfatec/notebook/tree/master/database)
+
+- [那些奇葩的 BUG](https://github.com/wfatec/notebook/tree/master/bugs)
