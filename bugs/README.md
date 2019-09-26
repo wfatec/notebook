@@ -139,4 +139,5 @@ const wrapRouteEventFactory = () => {
 wrapRouteEventFactory();
 ```
 
-handler 中的 `target.apply(ctx, args)` 成功触发了路由的跳转，而改为 `target(args)` 则会失败！
+handler 中的 `target.apply(ctx, args)` 成功触发了路由的跳转，而改为 `target(args)` 或 `target.apply(null, args)` 则会失败！
+那么，**为什么在 Proxy handler 的 apply 属性的箭头函数中，apply 会生效，并改变了上下文？**
