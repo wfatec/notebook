@@ -1,3 +1,12 @@
+<!-- TOC -->
+
+- [这些年我遇到的奇葩 BUG](#这些年我遇到的奇葩-bug)
+    - [不管使用哪种路由，初次渲染 url 都默认添加 hash](#不管使用哪种路由初次渲染-url-都默认添加-hash)
+    - [监听 pushState/replaceState 时遇到的问题](#监听-pushstatereplacestate-时遇到的问题)
+    - [koroFileHeader 导致的无法 commit 问题](#korofileheader-导致的无法-commit-问题)
+
+<!-- /TOC -->
+
 # 这些年我遇到的奇葩 BUG
 
 ## 不管使用哪种路由，初次渲染 url 都默认添加 hash
@@ -141,3 +150,7 @@ wrapRouteEventFactory();
 
 handler 中的 `target.apply(ctx, args)` 成功触发了路由的跳转，而改为 `target(args)` 或 `target.apply(null, args)` 则会失败！
 那么，**为什么在 Proxy handler 的 apply 属性的箭头函数中，apply 会生效，并改变了上下文？**
+
+## koroFileHeader 导致的无法 commit 问题
+
+在进行 SDK 开发时，为了更好的对文件进行管理，我们会希望在文件头部写上一些简要的说明注释，包括 文件描述，作者，创建时间，修改时间等等，经过调研，我最终选择了 VSCode 插件 koroFileHeader 该插件可以自动生成文件头部注释，非常灵活。初期使用下来确实很不错，但最近忽然发现一个非常奇葩的 bug：修改后执行 `git commit` 后，自动的撤销了此前的修改
