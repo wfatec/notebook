@@ -8,6 +8,7 @@
         - [解构赋值默认值生效的问题](#解构赋值默认值生效的问题)
     - [split 妙用](#split-妙用)
     - [ES5 构造函数使用的一些注意点](#es5-构造函数使用的一些注意点)
+    - [纯 JS 实现文件上传](#纯-js-实现文件上传)
 
 <!-- /TOC -->
 
@@ -231,4 +232,84 @@ function MyConstructor() {}
 
 ```js
 var MyConstructor = function() {};
+```
+
+## 纯 JS 实现文件上传
+
+我们在实现文件上传时，通常的方式是通过使用 `input` 标签来实现：
+
+```js
+<input type="file" value="请选择文件" />
+```
+
+然后通过监听 `input` 标签的 `onchange` 事件来获取选中文件，并上传。
+
+但是有时候我们可能并不希望使用 `input` 标签，例如作为 sdk 工具被引入时，我们希望仅仅引入 JS 文件就能实现需求。
+
+思路如下：
+
+1. 通过 JS 动态创建临时 `<input />` 节点
+
+```js
+var input = document.createElement("input");
+input.type = "file";
+```
+
+2. 触发点击事件
+
+```js
+input.click();
+```
+
+此时我们成功的打开了系统的文件选择窗口
+
+3. 监听 `onchange` 事件并获取 file 元素
+
+```js
+input.onchange = function() {
+  var file = input.files[0];
+  // 后续上传功能省略
+};
+```
+
+实际上，我们需要纯 JS 实现图片上传时，很多时候需要直接获取 base64 格式的源文件，用以直接进行展示，因此这里额外展示一下如何将源文件转化为 base64 格式：
+
+```js
+var reader = new FileReader();
+reader.readAsDataURL(file);
+var size = file.size;
+var tempFilePath = file.name;
+reader.onloadend = function(e) {
+  var tempFile = e.target.result;
+  // ...
+};
+```
+
+这里的 `tempFile` 就是我们需要的 base64 格式的文件。对于`<img />` 等元素，可以接通过 `src` 引入。
+
+完整代码如下：
+
+```js
+function tempUpload() {
+  var input = document.createElement("input");
+  var reader = new FileReader();
+  input.type = "file";
+  input.click();
+  input.onchange = function() {
+    var file = input.files[0];
+    reader.readAsDataURL(file);
+    var size = file.size;
+    var tempFilePath = file.name;
+    reader.onloadend = function(e) {
+      var tempFile = e.target.result;
+      window[lazyMethodCallBack.chooseImage](
+        data2ResStrWithoutData({
+          tempFilePath: tempFilePath,
+          tempFile: tempFile,
+          size: size
+        })
+      );
+    };
+  };
+}
 ```
