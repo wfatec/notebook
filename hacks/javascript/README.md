@@ -7,6 +7,7 @@
         - [我为什么喜欢解构赋值？](#我为什么喜欢解构赋值)
         - [解构赋值默认值生效的问题](#解构赋值默认值生效的问题)
     - [split 妙用](#split-妙用)
+    - [ES5 构造函数使用的一些注意点](#es5-构造函数使用的一些注意点)
 
 <!-- /TOC -->
 
@@ -201,12 +202,12 @@ export function getContents(markdown) {
 }
 ```
 
-注意这里的 **“.split(/^{{("demo":[^}]*)}}$/gm)”** 这里会以 `{{"demo": "pages/components/buttons/TextButtons.js"}}` 为分割符进行分割，并且会在结果中保留分割符，为什么会这样的？实际上就是正则表达式中的 `()` 在起作用，他会保留括号中的部分，我们测试一下：
+注意这里的 **“.split(/^{{("demo":[^}]*)}}\$/gm)”** 这里会以 `{{"demo": "pages/components/buttons/TextButtons.js"}}` 为分割符进行分割，并且会在结果中保留分割符，为什么会这样的？实际上就是正则表达式中的 `()` 在起作用，他会保留括号中的部分，我们测试一下：
 
 ```js
 let str = "aaa,bbb,ccc";
-console.log(str.split(/(,)/))
-console.log(str.split(/,/))
+console.log(str.split(/(,)/));
+console.log(str.split(/,/));
 ```
 
 结果为：
@@ -218,3 +219,16 @@ console.log(str.split(/,/))
 
 符合预期。
 
+## ES5 构造函数使用的一些注意点
+
+1. 函数作为构造函数时，只能使用声明式
+
+```js
+function MyConstructor() {}
+```
+
+而不能是变量赋值的方式：
+
+```js
+var MyConstructor = function() {};
+```
