@@ -12,6 +12,7 @@
     - [函数参数解构特性](#函数参数解构特性)
     - [尾调用优化](#尾调用优化)
         - [尾递归优化](#尾递归优化)
+    - [class 和构造函数的区别](#class-和构造函数的区别)
 
 <!-- /TOC -->
 
@@ -429,3 +430,67 @@ function restricted() {
 }
 restricted();
 ```
+
+## class 和构造函数的区别
+
+1. `class` 中定义的方法不可枚举
+
+```js
+class Point {
+  constructor(x, y) {
+    // ...
+  }
+
+  toString() {
+    // ...
+  }
+}
+
+Object.keys(Point.prototype)
+// []
+Object.getOwnPropertyNames(Point.prototype)
+// ["constructor","toString"]
+```
+
+而构造函数：
+
+```js
+var Point = function (x, y) {
+  // ...
+};
+
+Point.prototype.toString = function() {
+  // ...
+};
+
+Object.keys(Point.prototype)
+// ["toString"]
+Object.getOwnPropertyNames(Point.prototype)
+// ["constructor","toString"]
+```
+
+2. `class` 必须使用 `new` 调用，否则会报错
+
+```js
+class Foo {
+  constructor() {
+    return Object.create(null);
+  }
+}
+
+Foo()
+// TypeError: Class constructor Foo cannot be invoked without 'new'
+```
+
+3. `class` 和模块的内部，默认就是严格模式
+
+4. `class` 不存在变量提升（hoist）
+
+```js
+new Foo(); // ReferenceError
+class Foo {}
+```
+
+5. 继承时父子类的实例化顺序不同
+
+ES5 的继承，实质是先创造子类的实例对象this，然后再将父类的方法添加到this上面（Parent.apply(this)）。ES6 的继承机制完全不同，实质是先将父类实例对象的属性和方法，加到this上面（所以必须先调用super方法），然后再用子类的构造函数修改this。
